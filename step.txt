@@ -1,0 +1,22 @@
+644  git clone https://github.com/scotch-io/python-flask-crud-1.git
+  645  cd python-flask-crud-1/
+  646  ls
+  647  pip install flask_bootstrap
+  648  flask run
+  649  export FLASK_APP=run.py
+  650  virtualenv .venv
+  651  source .venv/bin/activate
+  652  pip install -r requirements.txt
+  653  sublime .
+  654  pip install -r requirements.txt
+  655  pip install mysql
+  656  brew install mysql
+  657  export PATH=$PATH:/usr/local/mysql/bin
+  658  echo $PATH
+  659  pip3 install mysqlclient
+  660  pip install -r requirements.txt
+  661  flask run
+  662  mkdir instance
+  663  cp config.py instance/config.py
+  664  flask run
+  665  history
