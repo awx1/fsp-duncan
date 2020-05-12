@@ -1,22 +1,23 @@
-644  git clone https://github.com/scotch-io/python-flask-crud-1.git
-  645  cd python-flask-crud-1/
-  646  ls
-  647  pip install flask_bootstrap
-  648  flask run
-  649  export FLASK_APP=run.py
+
+  
   650  virtualenv .venv
   651  source .venv/bin/activate
   652  pip install -r requirements.txt
-  653  sublime .
-  654  pip install -r requirements.txt
-  655  pip install mysql
-  656  brew install mysql
+       brew install mysqlclient
+  655  brew install mysql
   657  export PATH=$PATH:/usr/local/mysql/bin
-  658  echo $PATH
-  659  pip3 install mysqlclient
-  660  pip install -r requirements.txt
-  661  flask run
-  662  mkdir instance
-  663  cp config.py instance/config.py
-  664  flask run
-  665  history
+       export FLASK_CONFIG=development
+  649  export FLASK_APP=run.py
+  
+  $ brew services stop mysql
+  $ pip pkill mysqld
+  $ rm -rf /usr/local/var/mysql/ # NOTE: this will delete your existing database!!!
+  $ brew postinstall mysql
+  $ brew services restart mysql
+  $ mysql -u root
+
+  pip install --upgrade SQLAlchemy
+
+  Need to edit: /Users/alexanderxiong/Documents/Personal/Projects/FSP/example3/python-flask-crud-1/.venv/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py
+  From: cls, key = identity_key(instance=obj)
+  To: cls, key = identity_key(instance=obj)[:2]

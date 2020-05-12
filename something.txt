@@ -1,0 +1,235 @@
+  364  10/05/20 22:44:07 flask db migrate
+  365  10/05/20 22:44:07 ls
+  366  10/05/20 22:44:07 flask db init
+  367  10/05/20 22:44:07 pip install flask-migrate
+  368  10/05/20 22:44:07 pip3 install flask-migrate
+  369  10/05/20 22:44:07 flask db init
+  370  10/05/20 22:44:07 pip install flask-migrate --upgrade
+  371  10/05/20 22:44:07 pip3 install flask-migrate --upgrade
+  372  10/05/20 22:44:07 flask run
+  373  10/05/20 22:44:07 cd Documents/Personal/Projects/FSP/example3/
+  374  10/05/20 22:44:07 ls
+  375  10/05/20 22:44:07 cd python-flask-crud-1/
+  376  10/05/20 22:44:07 ls
+  377  10/05/20 22:44:07 pip uninstall flask
+  378  10/05/20 22:44:07 virtualenv .venv
+  379  10/05/20 22:44:07 source .venv/bin/activate
+  380  10/05/20 22:44:07 pip install -r requirements.txt
+  381  10/05/20 22:44:07 pip install mysql
+  382  10/05/20 22:44:07 brew install mysql
+  383  10/05/20 22:44:07 export PATH=$PATH:/usr/local/mysql/bin
+  384  10/05/20 22:44:07 pip3 install mysqlclient
+  385  10/05/20 22:44:07 flask run
+  386  10/05/20 22:44:07 export FLASK_APP=run.py
+  387  10/05/20 22:44:07 flask run
+  388  10/05/20 22:44:07 echo $PATH
+  389  10/05/20 22:44:07 ls
+  390  10/05/20 22:44:07 echo $PATH
+  391  10/05/20 22:44:07 flask run
+  392  10/05/20 22:44:07 export FLASK_CONFIG=development
+  393  10/05/20 22:44:07 flask run
+  394  10/05/20 22:44:07 flask db init
+  395  10/05/20 22:44:07 flask db migrate
+  396  10/05/20 22:44:07 flask db upgrade
+  397  10/05/20 22:44:07 mysql -u root -p
+  398  10/05/20 22:44:07 flask db init
+  399  10/05/20 22:44:07 alembic upgrade head
+  400  10/05/20 22:44:07 flask db update
+  401  10/05/20 22:44:07 flask db upgradee
+  402  10/05/20 22:44:07 flask db upgrade
+  403  10/05/20 22:44:07 mysql -u root
+  404  10/05/20 22:44:07 mysql -u root -p
+  405  10/05/20 22:44:07 flask db init
+  406  10/05/20 22:44:07 flask db migrate
+  407  10/05/20 22:44:07 flask db upgrade
+  408  10/05/20 22:44:07 mysql -u root -p
+  409  10/05/20 22:44:07 pip install flask-sqlalchemy mysql-python
+  410  10/05/20 22:44:07 brew unlink mysql
+  411  10/05/20 22:44:07 brew install mysql-connector-c
+  412  10/05/20 22:44:07 which (mysql_config)
+  413  10/05/20 22:44:07 which mysql_config
+  414  10/05/20 22:44:07 ls
+  415  10/05/20 22:44:07 cd ..
+  416  10/05/20 22:44:07 cd ..
+  417  10/05/20 22:44:07 cd ..
+  418  10/05/20 22:44:07 cd ..
+  419  10/05/20 22:44:07 cd ..
+  420  10/05/20 22:44:07 cd ..
+  421  10/05/20 22:44:07 cd ..
+  422  10/05/20 22:44:07 cd local/mysql/bin/mysql_config
+  423  10/05/20 22:44:07 cd ..
+  424  10/05/20 22:44:07 ls
+  425  10/05/20 22:44:07 cd /usr/local/mysql/bin/mysql_config
+  426  10/05/20 22:44:07 cd /usr/local/mysql/bin
+  427  10/05/20 22:44:07 ls
+  428  10/05/20 22:44:07 vim mysql_config
+  429  10/05/20 22:44:07 pip install mysqlclient
+  430  10/05/20 22:44:07 pip install MySQL-python
+  431  10/05/20 22:44:07 brew unlink mysql-connector-c
+  432  10/05/20 22:44:07 brew link mysql
+  433  10/05/20 22:44:07 cd ..
+  434  10/05/20 22:44:07 cd ..
+  435  10/05/20 22:44:07 cd ..
+  436  10/05/20 22:44:07  cd ..
+  437  10/05/20 22:44:07 cd Users
+  438  10/05/20 22:44:07 ls
+  439  10/05/20 22:44:07 cd alexanderxiong/
+  440  10/05/20 22:44:07 cd Documents/
+  441  10/05/20 22:44:07 cd Personal/
+  442  10/05/20 22:44:07 cd Projects/
+  443  10/05/20 22:44:07 cd FSP/example3
+  444  10/05/20 22:44:07 ls
+  445  10/05/20 22:44:07 cd python-flask-crud-1/
+  446  10/05/20 22:44:07 ls
+  447  10/05/20 22:44:07 flask db init
+  448  10/05/20 22:44:07 flask db migrate
+  449  10/05/20 22:44:07 flask db upgrade
+  450  10/05/20 22:44:07 mysql -u root -p
+  451  10/05/20 22:44:07 python
+  452  10/05/20 22:44:07 mysql -u root -p
+  453  10/05/20 22:44:07 python --version
+  454  10/05/20 22:44:07 flask run
+  455  10/05/20 22:44:07 flask run
+  456  10/05/20 22:44:07 flask run
+  457  10/05/20 22:44:07 psql database
+  458  10/05/20 22:44:07 mysql database
+  459  10/05/20 22:44:07 mysql database -p
+  460  10/05/20 22:44:07 mysql database -p
+  461  10/05/20 22:44:07 mysql database -p
+  462  10/05/20 22:44:07 mysql database -p
+  463  10/05/20 22:44:07 mysql -u root
+  464  10/05/20 22:44:07 mysql -u root -p
+  465  10/05/20 22:44:07 flask db init
+  466  10/05/20 22:44:07 flask db upgrade
+  467  10/05/20 22:44:07 flask db upgrade
+  468  10/05/20 22:44:07 flask shell
+  469  10/05/20 22:44:07 flask db upgrade
+  470  10/05/20 22:44:07 flask db upgrade
+  471  10/05/20 22:44:07 flask db init
+  472  10/05/20 22:44:07 flask db migrate
+  473  10/05/20 22:44:07 flask db migrate
+  474  10/05/20 22:44:07 flask db init
+  475  10/05/20 22:44:07 flask db migrate
+  476  10/05/20 22:44:07 git status
+  477  10/05/20 22:44:07 git diff app/__init__.py
+  478  10/05/20 22:44:07 git restore app/__init__.py
+  479  10/05/20 22:44:07 git update
+  480  10/05/20 22:44:07 git update-ref
+  481  10/05/20 22:44:07 flask db migrate
+  482  10/05/20 22:44:07 flask run
+  483  10/05/20 22:44:07 flask db init
+  484  10/05/20 22:44:07 flask db migrate
+  485  10/05/20 22:44:07 mysql -u root
+  486  10/05/20 22:44:07 mysql -u root -p
+  487  10/05/20 22:44:07 flask db migrate
+  488  10/05/20 22:44:07 git pull
+  489  10/05/20 22:44:07 git reset --hard d31bb028c607618bf1a8b22f26c8c7edf33b7a00
+  490  10/05/20 22:44:07 flask db migrate
+  491  10/05/20 22:44:07 flask db migrate
+  492  10/05/20 22:44:07 mysql -u root
+  493  10/05/20 22:44:07 mysql -u root password 'Tcotl123!'
+  494  10/05/20 22:44:07 mysql -u root password 'Tcotl123!'
+  495  10/05/20 22:44:07 mysql -u root password
+  496  10/05/20 22:44:07 mysql -u root password 'Tcotl123!'
+  497  10/05/20 22:44:07 mysql -u root -p password
+  498  10/05/20 22:44:07 mysqladmin -u root -p password
+  499  10/05/20 22:44:07 sudo -i
+  500  10/05/20 22:44:26 cd Documents/Personal/Projects/FSP/example3/python-flask-crud-1/
+  501  10/05/20 22:44:46 virtualenv .venv
+  502  10/05/20 22:44:56 source .venv/bin/activate
+  503  10/05/20 22:45:13 pip install -r requirements.txt
+  504  10/05/20 22:45:36 export PATH=$PATH:/usr/local/mysql/bin
+  505  10/05/20 22:45:43 export FLASK_APP=run.py
+  506  10/05/20 22:45:52 pip3 install mysqlclient
+  507  10/05/20 22:46:05 flask run
+  508  10/05/20 22:47:33 flask run
+  509  10/05/20 22:48:05 export FLASK_CONFIG=development
+  510  10/05/20 22:48:10 export FLASK_APP=run.py
+  511  10/05/20 22:48:12 flask run
+  512  10/05/20 22:48:47 pip install flask-sqlalchemy mysql-python
+  513  10/05/20 23:11:43 brew info openssl
+  514  11/05/20 00:19:23 brew install mysql-connector-c
+  515  11/05/20 00:20:41 brew unlink mysql-connector-c
+  516  11/05/20 00:20:49 brew install mysql
+  517  11/05/20 00:21:23 pip install mysql-python
+  518  11/05/20 00:23:48 export LDFLAGS="-L/usr/local/opt/openssl/lib"
+  519  11/05/20 00:23:54 export CPPFLAGS="-I/usr/local/opt/openssl/include"
+  520  11/05/20 00:23:57 pip install mysql-python
+  521  11/05/20 00:25:01 brew info openssl
+  522  11/05/20 00:25:28 echo 'export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"' >> ~/.bash_profile
+  523  11/05/20 00:25:33 pip install mysql-python
+  524  11/05/20 00:26:30 sudo installer -pkg
+  525  11/05/20 00:27:00 sudo installer mysql-python
+  526  11/05/20 00:27:17 sudo installer -p mysql-python
+  527  11/05/20 00:27:25 sudo installer -pkg mysql-python
+  528  11/05/20 00:28:23 sudo apt-get install python3-dev
+  529  11/05/20 00:28:34 sudo apt-get update
+  530  11/05/20 00:28:44 python --version
+  531  11/05/20 00:30:58 pip install mysql-connector-python
+  532  11/05/20 00:31:10 flask run
+  533  11/05/20 00:31:51 mysql -u root
+  534  11/05/20 00:32:15 mysql -u root -p.
+  535  11/05/20 00:32:57 mysqladmin -u root password Tcotl123!
+  536  11/05/20 00:33:08 mysqladmin -u root password 'Tcotl123!'
+  537  11/05/20 00:34:09 brew services stop mysql
+  538  11/05/20 00:34:25 pkill mysqld
+  539  11/05/20 00:34:32 rm -rf /usr/local/var/mysql/
+  540  11/05/20 00:34:38 brew postinstall mysql
+  541  11/05/20 00:34:56 brew services restart mysql
+  542  11/05/20 00:35:05 mysql -uroot
+  543  11/05/20 00:37:09 mysql -u root -p
+  544  11/05/20 00:37:55 sudo pkill mysqld
+  545  11/05/20 00:38:04 rm -rf /usr/local/var/mysql/
+  546  11/05/20 00:38:14 brew postinstall mysql
+  547  11/05/20 00:38:33 brew services restart mysql
+  548  11/05/20 00:39:05 mysql -uroot
+  549  11/05/20 00:39:50 flask db init
+  550  11/05/20 00:40:05 flask db init
+  551  11/05/20 00:40:22 flask db migrate
+  552  11/05/20 00:41:37 flask db migrate
+  553  11/05/20 00:46:43 pip upgrade mysql-connector
+  554  11/05/20 00:46:55 brew upgrade mysql-connector
+  555  11/05/20 00:47:58 pip uninstall mysql-connector
+  556  11/05/20 00:48:25 pip list
+  557  11/05/20 00:49:00 pip uninstall mysql-connector-python
+  558  11/05/20 00:49:07 pip list
+  559  11/05/20 00:49:30 flask db init
+  560  11/05/20 00:49:44 flask db migrate
+  561  11/05/20 00:50:33 brew services stop mysql
+  562  11/05/20 00:50:43 pip pkill mysqld
+  563  11/05/20 00:50:57 pip3 pkill mysqld
+  564  11/05/20 00:51:06 rm -rf /usr/local/var/mysql/
+  565  11/05/20 00:51:11 quit
+  566  11/05/20 00:51:36 deactivate
+  567  11/05/20 00:52:03 virtualenv .venv
+  568  11/05/20 00:52:12 source .venv/bin/activate
+  569  11/05/20 00:52:19 pip install -r requirements.txt
+  570  11/05/20 00:52:27 export PATH=$PATH:/usr/local/mysql/bin
+  571  11/05/20 00:52:33 export FLASK_APP=run.py
+  572  11/05/20 00:52:38 flask run
+  573  11/05/20 00:53:18 mysql -uroot
+  574  11/05/20 00:53:40 brew install mysql
+  575  11/05/20 00:53:56 brew reinstall mysql
+  576  11/05/20 00:54:26 mysql -uroot
+  577  11/05/20 00:54:32 brew services stop mysql
+  578  11/05/20 00:54:39 pip pkill mysqld
+  579  11/05/20 00:54:46 rm -rf /usr/local/var/mysql/
+  580  11/05/20 00:54:52 brew postinstall mysql
+  581  11/05/20 00:55:04 brew services restart mysql
+  582  11/05/20 00:55:11 mysql -uroot
+  583  11/05/20 00:55:56 pip list
+  584  11/05/20 00:56:14 flask db init
+  585  11/05/20 00:56:29 flask db migrate
+  586  11/05/20 01:02:01 pip install --upgrade SQLAlchemy
+  587  11/05/20 01:02:12 flask db migrate
+  588  11/05/20 01:02:56 flask db upgrade
+  589  11/05/20 01:03:04 mysql -u root
+  590  11/05/20 01:07:56 pip list
+  591  11/05/20 01:09:22 history
+  592  11/05/20 01:11:22 flask run
+  593  11/05/20 01:19:56 history
+  594  11/05/20 01:34:53 echo $PATH
+  595  11/05/20 01:37:51 pip list
+  596  11/05/20 01:50:29 brew list
+  597  11/05/20 01:55:22 HISTTIMEFORMAT="%d/%m/%y %T "
+  598  11/05/20 01:56:04 history
