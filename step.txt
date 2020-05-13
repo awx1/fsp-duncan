@@ -21,3 +21,5 @@
   Need to edit: /Users/alexanderxiong/Documents/Personal/Projects/FSP/example3/python-flask-crud-1/.venv/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py
   From: cls, key = identity_key(instance=obj)
   To: cls, key = identity_key(instance=obj)[:2]
+
+  pip install Flask-Testing
