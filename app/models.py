@@ -65,7 +65,7 @@ class Department(db.Model):
     description = db.Column(db.String(200))
     date = db.Column(db.Date)
     time = db.Column(db.Time)
-    num_employees = db.Column(db.Integer)
+    numPeople = db.Column(db.Integer)
     employees = db.relationship('Employee', backref='department',
                                 lazy='dynamic')
 

@@ -20,7 +20,7 @@
                     <th width="27%"; style="text-align:center"> Description </th>
                     <th width="10%"; style="text-align:center"> Date </th>
                     <th width="10%"; style="text-align:center"> Time </th>
-                    <th width="12%"; style="text-align:center"> # People </th>
+                    <!-- <th width="12%"; style="text-align:center"> # People </th> -->
                     <th width="9%"; style="text-align:center"> Edit </th>
                     <th width="12%"; style="text-align:center"> Delete </th>
                   </tr>
@@ -32,13 +32,13 @@
                       <td> {{ department.description }} </td>
                       <td> {{ department.date }} </td>
                       <td> {{ department.time }} </td>
-                      <td>
+                      <!-- <td>
                         {% if department.employees %}
                           {{ department.employees.count() }}
                         {% else %}
                           0
                         {% endif %}
-                      </td>
+                      </td> -->
                       <td>
                         <a href="{{ url_for('admin.edit_department', id=department.id) }}">
                           <i class="fa fa-pencil"></i> Edit
