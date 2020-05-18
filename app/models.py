@@ -19,8 +19,8 @@ class Employee(UserMixin, db.Model):
     first_name = db.Column(db.String(60), index=True)
     last_name = db.Column(db.String(60), index=True)
     password_hash = db.Column(db.String(128))
-    department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    # department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
+    # role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     is_admin = db.Column(db.Boolean, default=False)
 
     @property
@@ -46,6 +46,25 @@ class Employee(UserMixin, db.Model):
     def __repr__(self):
         return '<Employee: {}>'.format(self.username)
 
+class Freshman(db.Model):
+    """
+    Create an Freshman table
+    """
+
+    # Ensures table will be named in plural and not in singular
+    # as is the name of the model
+    __tablename__ = 'freshman'
+
+    id = db.Column(db.Integer, primary_key=True)
+    # email = db.Column(db.String(60), index=True, unique=True)
+    # username = db.Column(db.String(60), index=True, unique=True)
+    # first_name = db.Column(db.String(60), index=True)
+    # last_name = db.Column(db.String(60), index=True)
+    name = db.Column(db.String(60), unique=True)
+    netID = db.Column(db.String(200))
+
+    def __repr__(self):
+        return '<Freshman: {}>'.format(self.email)
 
 # Set up user_loader
 @login_manager.user_loader
@@ -66,25 +85,25 @@ class Department(db.Model):
     date = db.Column(db.Date)
     time = db.Column(db.Time)
     numPeople = db.Column(db.Integer)
-    employees = db.relationship('Employee', backref='department',
-                                lazy='dynamic')
+    # employees = db.relationship('Employee', backref='department',
+    #                             lazy='dynamic')
 
     def __repr__(self):
         return '<Department: {}>'.format(self.name)
 
 
-class Role(db.Model):
-    """
-    Create a Role table
-    """
+# class Role(db.Model):
+#     """
+#     Create a Role table
+#     """
 
-    __tablename__ = 'roles'
+#     __tablename__ = 'roles'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(60), unique=True)
-    description = db.Column(db.String(200))
-    employees = db.relationship('Employee', backref='role',
-                                lazy='dynamic')
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(60), unique=True)
+#     description = db.Column(db.String(200))
+#     employees = db.relationship('Employee', backref='role',
+#                                 lazy='dynamic')
 
-    def __repr__(self):
-        return '<Role: {}>'.format(self.name)
+#     def __repr__(self):
+#         return '<Role: {}>'.format(self.name)
