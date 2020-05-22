@@ -13,7 +13,7 @@ class DepartmentForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = IntegerField('FSP', validators=[DataRequired()])
@@ -27,7 +27,7 @@ class AssociatesForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = IntegerField('FSP', validators=[DataRequired()])
@@ -41,7 +41,7 @@ class BikeForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = IntegerField('FSP', validators=[DataRequired()])
@@ -55,7 +55,7 @@ class CulArtForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = IntegerField('FSP', validators=[DataRequired()])
@@ -69,7 +69,7 @@ class MerchForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = IntegerField('FSP', validators=[DataRequired()])
@@ -83,7 +83,7 @@ class SocialsForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = IntegerField('FSP', validators=[DataRequired()])
@@ -97,7 +97,7 @@ class SpiritForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = IntegerField('FSP', validators=[DataRequired()])
@@ -111,7 +111,7 @@ class SlushForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/Y', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = IntegerField('FSP', validators=[DataRequired()])

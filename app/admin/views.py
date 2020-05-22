@@ -148,6 +148,7 @@ def add_associate():
     if form.validate_on_submit():
         associate = Associates(name=form.name.data,
                                 description=form.description.data,
+                                date=form.date.data,
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
@@ -236,7 +237,7 @@ def list_bikes():
     bikes = Bike.query.all()
 
     return render_template('admin/bikes/bikes.html',
-                           bikes=bikes, title="Bikes Jobs")
+                           bikes=bikes, title="Beer Bike Jobs")
 
 @admin.route('/bike/add', methods=['GET', 'POST'])
 @login_required
@@ -252,6 +253,7 @@ def add_bike():
     if form.validate_on_submit():
         bike = Bike(name=form.name.data,
                                 description=form.description.data,
+                                date=form.date.data,
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
@@ -260,10 +262,10 @@ def add_bike():
             # add bikes job to the database
             db.session.add(bike)
             db.session.commit()
-            flash('You have successfully added a new Bike Job.')
+            flash('You have successfully added a new Beer Bike Job.')
         except:
             # in case bikes job name already exists
-            flash('Error: this Bike Job already exists.')
+            flash('Error: this Beer Bike Job already exists.')
 
         # redirect to bikes job page
         return redirect(url_for('admin.list_bikes'))
@@ -271,7 +273,7 @@ def add_bike():
     # load bikes template
     return render_template('admin/bikes/bike.html', action="Add",
                            add_bike=add_bike, form=form,
-                           title="Add Bike Job")
+                           title="Add Beer Bike Job")
 
 @admin.route('/bike/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -294,7 +296,7 @@ def edit_bike(id):
         bike.fsp = form.fsp.data
         bike.numPeople = form.numPeople.data
         db.session.commit()
-        flash('You have successfully edited the Bike Job.')
+        flash('You have successfully edited the Beer Bike Job.')
 
         # redirect to the bikes job page
         return redirect(url_for('admin.list_bikes'))
@@ -307,7 +309,7 @@ def edit_bike(id):
     bike.end = form.end_at.data
     return render_template('admin/bikes/bike.html', action="Edit",
                            add_bike=add_bike, form=form,
-                           bike=bike, title="Edit Bike Job")
+                           bike=bike, title="Edit Beer Bike Job")
 
 @admin.route('/bike/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -320,12 +322,12 @@ def delete_bike(id):
     bike = Bike.query.get_or_404(id)
     db.session.delete(bike)
     db.session.commit()
-    flash('You have successfully deleted the Bike job.')
+    flash('You have successfully deleted the Beer Bike job.')
 
     # redirect to the bikes job page
     return redirect(url_for('admin.list_bikes'))
 
-    return render_template(title="Delete Bike Job")
+    return render_template(title="Delete Beer Bike Job")
 
 # CulArt Views
 
@@ -356,6 +358,7 @@ def add_culart():
     if form.validate_on_submit():
         culart = CulArt(name=form.name.data,
                                 description=form.description.data,
+                                date=form.date.data,
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
@@ -364,10 +367,10 @@ def add_culart():
             # add culart job to the database
             db.session.add(culart)
             db.session.commit()
-            flash('You have successfully added a new CulArt Job.')
+            flash('You have successfully added a new C & A Job.')
         except:
             # in case culart job name already exists
-            flash('Error: this CulArt Job already exists.')
+            flash('Error: this C & A Job already exists.')
 
         # redirect to culart job page
         return redirect(url_for('admin.list_cularts'))
@@ -375,7 +378,7 @@ def add_culart():
     # load culart template
     return render_template('admin/cularts/culart.html', action="Add",
                            add_culart=add_culart, form=form,
-                           title="Add CulArt Job")
+                           title="Add C & A Job")
 
 @admin.route('/culart/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -388,7 +391,7 @@ def edit_culart(id):
     add_culart = False
 
     culart = CulArt.query.get_or_404(id)
-    form = CulArtForm(obj=bike)
+    form = CulArtForm(obj=culart)
     if form.validate_on_submit():
         culart.name = form.name.data
         culart.description = form.description.data
@@ -398,7 +401,7 @@ def edit_culart(id):
         culart.fsp = form.fsp.data
         culart.numPeople = form.numPeople.data
         db.session.commit()
-        flash('You have successfully edited the CulArt Job.')
+        flash('You have successfully edited the C & A Job.')
 
         # redirect to the culart job page
         return redirect(url_for('admin.list_cularts'))
@@ -411,7 +414,7 @@ def edit_culart(id):
     culart.end = form.end_at.data
     return render_template('admin/cularts/culart.html', action="Edit",
                            add_culart=add_culart, form=form,
-                           culart=culart, title="Edit CulArt Job")
+                           culart=culart, title="Edit C & A Job")
 
 @admin.route('/culart/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -424,12 +427,12 @@ def delete_culart(id):
     culart = CulArt.query.get_or_404(id)
     db.session.delete(culart)
     db.session.commit()
-    flash('You have successfully deleted the CulArt job.')
+    flash('You have successfully deleted the C & A job.')
 
     # redirect to the culart job page
     return redirect(url_for('admin.list_cularts'))
 
-    return render_template(title="Delete CulArt Job")
+    return render_template(title="Delete C & A Job")
 
 # Merch Views
 
@@ -460,6 +463,7 @@ def add_merch():
     if form.validate_on_submit():
         merch = Merch(name=form.name.data,
                                 description=form.description.data,
+                                date=form.date.data,
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
@@ -564,6 +568,7 @@ def add_spirit():
     if form.validate_on_submit():
         spirit = Spirit(name=form.name.data,
                                 description=form.description.data,
+                                date=form.date.data,
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
@@ -668,6 +673,7 @@ def add_social():
     if form.validate_on_submit():
         social = Socials(name=form.name.data,
                                 description=form.description.data,
+                                date=form.date.data,
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
@@ -772,6 +778,7 @@ def add_slush():
     if form.validate_on_submit():
         slush = Slush(name=form.name.data,
                                 description=form.description.data,
+                                date=form.date.data,
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
@@ -804,7 +811,7 @@ def edit_slush(id):
     add_slush = False
 
     slush = Slush.query.get_or_404(id)
-    form = SlushForm(obj=merch)
+    form = SlushForm(obj=slush)
     if form.validate_on_submit():
         slush.name = form.name.data
         slush.description = form.description.data
@@ -996,14 +1003,14 @@ def edit_freshman(id):
     form = FreshmanForm(obj=freshman)
     if form.validate_on_submit():
         freshman.name = form.name.data
-        freshman.description = form.description.data
+        freshman.netID = form.netID.data
         db.session.commit()
         flash('You have successfully edited the freshman.')
 
         # redirect to the departments page
         return redirect(url_for('admin.list_freshmans'))
 
-    form.description.data = freshman.description
+    form.netID.data = freshman.netID
     form.name.data = freshman.name
     return render_template('admin/freshmans/freshman.html', action="Edit",
                            add_freshman=add_freshman, form=form,
@@ -1023,7 +1030,7 @@ def delete_freshman(id):
     flash('You have successfully deleted the freshman.')
 
     # redirect to the departments page
-    return redirect(url_for('admin.list_freshman'))
+    return redirect(url_for('admin.list_freshmans'))
 
     return render_template(title="Delete freshman")
 

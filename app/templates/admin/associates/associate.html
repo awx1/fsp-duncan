@@ -2,9 +2,9 @@
 {% extends "base.html" %}
 {% block title %}
     {% if add_associate %}
-        Add New Associates Job
+        Add Associates Job
     {% else %}
-        Edit New Associates Job
+        Edit Associates Job
     {% endif %}
 {% endblock %}
 {% block body %}
@@ -14,9 +14,9 @@
       <div class="inner">
         <div class="center">
             {% if add_associate %}
-                <h1>Add New Associates Job</h1>
+                <h1>Add Associates Job</h1>
             {% else %}
-                <h1>Edit New Associates Job</h1>
+                <h1>Edit Associates Job</h1>
             {% endif %}
             <br/>
             {{ wtf.quick_form(form) }}
