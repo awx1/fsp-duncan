@@ -1,10 +1,10 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}
-    {% if add_department %}
-        Add Socials Job
+    {% if add_merch %}
+        Add Merch Job
     {% else %}
-        Edit Socials Job
+        Edit Merch Job
     {% endif %}
 {% endblock %}
 {% block body %}
@@ -13,10 +13,10 @@
     <div class="middle">
       <div class="inner">
         <div class="center">
-            {% if add_department %}
-                <h1>Add Socials Job</h1>
+            {% if add_merch %}
+                <h1>Add Merch Job</h1>
             {% else %}
-                <h1>Edit Socials Job</h1>
+                <h1>Edit Merch Job</h1>
             {% endif %}
             <br/>
             {{ wtf.quick_form(form) }}

@@ -23,3 +23,5 @@
   To: cls, key = identity_key(instance=obj)[:2]
 
   pip install Flask-Testing
+
+  pip install WTForms-Components

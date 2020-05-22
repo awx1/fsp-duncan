@@ -4,9 +4,9 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from . import admin
-from forms import DepartmentForm, RoleForm, FreshmanForm
+from forms import DepartmentForm, AssociatesForm, BikeForm, CulArtForm, MerchForm, SpiritForm, SocialsForm, SlushForm, RoleForm, FreshmanForm
 from .. import db
-from ..models import Department, Employee, Freshman
+from ..models import Department, Associates, Bike, CulArt, Merch, Spirit, Socials, Slush, Employee, Freshman
 
 
 def check_admin():
@@ -16,9 +16,7 @@ def check_admin():
     if not current_user.is_admin:
         abort(403)
 
-
 # Department Views
-
 
 @admin.route('/departments', methods=['GET', 'POST'])
 @login_required
@@ -33,7 +31,6 @@ def list_departments():
     return render_template('admin/departments/departments.html',
                            departments=departments, title="Departments")
 
-
 @admin.route('/departments/add', methods=['GET', 'POST'])
 @login_required
 def add_department():
@@ -47,7 +44,11 @@ def add_department():
     form = DepartmentForm()
     if form.validate_on_submit():
         department = Department(name=form.name.data,
-                                description=form.description.data)
+                                description=form.description.data,
+                                start=form.start_at.data,
+                                end=form.end_at.data,
+                                fsp=form.fsp.data,
+                                numPeople=form.numPeople.data)
         try:
             # add department to the database
             db.session.add(department)
@@ -65,7 +66,6 @@ def add_department():
                            add_department=add_department, form=form,
                            title="Add Department")
 
-
 @admin.route('/departments/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_department(id):
@@ -81,18 +81,25 @@ def edit_department(id):
     if form.validate_on_submit():
         department.name = form.name.data
         department.description = form.description.data
+        department.date = form.date.data
+        department.start = form.start_at.data
+        department.end = form.end_at.data
+        department.fsp = form.fsp.data
+        department.numPeople = form.numPeople.data
         db.session.commit()
         flash('You have successfully edited the department.')
 
         # redirect to the departments page
         return redirect(url_for('admin.list_departments'))
 
-    form.description.data = department.description
     form.name.data = department.name
+    form.description.data = department.description
+    department.date = form.date.data
+    department.start = form.start_at.data
+    department.end = form.end_at.data
     return render_template('admin/departments/department.html', action="Edit",
                            add_department=add_department, form=form,
                            department=department, title="Edit Department")
-
 
 @admin.route('/departments/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -112,8 +119,735 @@ def delete_department(id):
 
     return render_template(title="Delete Department")
 
-# Role Views
+# Associates Views
 
+@admin.route('/associates', methods=['GET', 'POST'])
+@login_required
+def list_associates():
+    """
+    List all associates jobs
+    """
+    check_admin()
+
+    associates = Associates.query.all()
+
+    return render_template('admin/associates/associates.html',
+                           associates=associates, title="Associates Jobs")
+
+@admin.route('/associates/add', methods=['GET', 'POST'])
+@login_required
+def add_associate():
+    """
+    Add a associates job to the database
+    """
+    check_admin()
+
+    add_associate = True
+
+    form = AssociatesForm()
+    if form.validate_on_submit():
+        associate = Associates(name=form.name.data,
+                                description=form.description.data,
+                                start=form.start_at.data,
+                                end=form.end_at.data,
+                                fsp=form.fsp.data,
+                                numPeople=form.numPeople.data)
+        try:
+            # add associates job to the database
+            db.session.add(associate)
+            db.session.commit()
+            flash('You have successfully added a new Associates Job.')
+        except:
+            # in case associates job name already exists
+            flash('Error: this Associates Job already exists.')
+
+        # redirect to associates job page
+        return redirect(url_for('admin.list_associates'))
+
+    # load associates template
+    return render_template('admin/associates/associate.html', action="Add",
+                           add_associate=add_associate, form=form,
+                           title="Add Associates Job")
+
+@admin.route('/associates/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_associate(id):
+    """
+    Edit a associates job
+    """
+    check_admin()
+
+    add_associate = False
+
+    associate = Associates.query.get_or_404(id)
+    form = AssociatesForm(obj=associate)
+    if form.validate_on_submit():
+        associate.name = form.name.data
+        associate.description = form.description.data
+        associate.date = form.date.data
+        associate.start = form.start_at.data
+        associate.end = form.end_at.data
+        associate.fsp = form.fsp.data
+        associate.numPeople = form.numPeople.data
+        db.session.commit()
+        flash('You have successfully edited the Associates Job.')
+
+        # redirect to the associates job page
+        return redirect(url_for('admin.list_associates'))
+
+    form.name.data = associate.name
+    form.description.data = associate.description
+
+    associate.date = form.date.data
+    associate.start = form.start_at.data
+    associate.end = form.end_at.data
+    return render_template('admin/associates/associate.html', action="Edit",
+                           add_associate=add_associate, form=form,
+                           associate=associate, title="Edit Associates Job")
+
+@admin.route('/associates/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_associate(id):
+    """
+    Delete a associate job from the database
+    """
+    check_admin()
+
+    associate = Associates.query.get_or_404(id)
+    db.session.delete(associate)
+    db.session.commit()
+    flash('You have successfully deleted the Associates job.')
+
+    # redirect to the associate job page
+    return redirect(url_for('admin.list_associates'))
+
+    return render_template(title="Delete Associates Job")
+
+# Bike Views
+
+@admin.route('/bike', methods=['GET', 'POST'])
+@login_required
+def list_bikes():
+    """
+    List all bike jobs
+    """
+    check_admin()
+
+    bikes = Bike.query.all()
+
+    return render_template('admin/bikes/bikes.html',
+                           bikes=bikes, title="Bikes Jobs")
+
+@admin.route('/bike/add', methods=['GET', 'POST'])
+@login_required
+def add_bike():
+    """
+    Add a bikes job to the database
+    """
+    check_admin()
+
+    add_bike = True
+
+    form = BikeForm()
+    if form.validate_on_submit():
+        bike = Bike(name=form.name.data,
+                                description=form.description.data,
+                                start=form.start_at.data,
+                                end=form.end_at.data,
+                                fsp=form.fsp.data,
+                                numPeople=form.numPeople.data)
+        try:
+            # add bikes job to the database
+            db.session.add(bike)
+            db.session.commit()
+            flash('You have successfully added a new Bike Job.')
+        except:
+            # in case bikes job name already exists
+            flash('Error: this Bike Job already exists.')
+
+        # redirect to bikes job page
+        return redirect(url_for('admin.list_bikes'))
+
+    # load bikes template
+    return render_template('admin/bikes/bike.html', action="Add",
+                           add_bike=add_bike, form=form,
+                           title="Add Bike Job")
+
+@admin.route('/bike/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_bike(id):
+    """
+    Edit a bikes
+    """
+    check_admin()
+
+    add_bike = False
+
+    bike = Bike.query.get_or_404(id)
+    form = BikeForm(obj=bike)
+    if form.validate_on_submit():
+        bike.name = form.name.data
+        bike.description = form.description.data
+        bike.date = form.date.data
+        bike.start = form.start_at.data
+        bike.end = form.end_at.data
+        bike.fsp = form.fsp.data
+        bike.numPeople = form.numPeople.data
+        db.session.commit()
+        flash('You have successfully edited the Bike Job.')
+
+        # redirect to the bikes job page
+        return redirect(url_for('admin.list_bikes'))
+
+    form.name.data = bike.name
+    form.description.data = bike.description
+
+    bike.date = form.date.data
+    bike.start = form.start_at.data
+    bike.end = form.end_at.data
+    return render_template('admin/bikes/bike.html', action="Edit",
+                           add_bike=add_bike, form=form,
+                           bike=bike, title="Edit Bike Job")
+
+@admin.route('/bike/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_bike(id):
+    """
+    Delete a bikes job from the database
+    """
+    check_admin()
+
+    bike = Bike.query.get_or_404(id)
+    db.session.delete(bike)
+    db.session.commit()
+    flash('You have successfully deleted the Bike job.')
+
+    # redirect to the bikes job page
+    return redirect(url_for('admin.list_bikes'))
+
+    return render_template(title="Delete Bike Job")
+
+# CulArt Views
+
+@admin.route('/culart', methods=['GET', 'POST'])
+@login_required
+def list_cularts():
+    """
+    List all culart jobs
+    """
+    check_admin()
+
+    cularts = CulArt.query.all()
+
+    return render_template('admin/cularts/cularts.html',
+                           cularts=cularts, title="C & A Jobs")
+
+@admin.route('/culart/add', methods=['GET', 'POST'])
+@login_required
+def add_culart():
+    """
+    Add a cularts job to the database
+    """
+    check_admin()
+
+    add_culart = True
+
+    form = CulArtForm()
+    if form.validate_on_submit():
+        culart = CulArt(name=form.name.data,
+                                description=form.description.data,
+                                start=form.start_at.data,
+                                end=form.end_at.data,
+                                fsp=form.fsp.data,
+                                numPeople=form.numPeople.data)
+        try:
+            # add culart job to the database
+            db.session.add(culart)
+            db.session.commit()
+            flash('You have successfully added a new CulArt Job.')
+        except:
+            # in case culart job name already exists
+            flash('Error: this CulArt Job already exists.')
+
+        # redirect to culart job page
+        return redirect(url_for('admin.list_cularts'))
+
+    # load culart template
+    return render_template('admin/cularts/culart.html', action="Add",
+                           add_culart=add_culart, form=form,
+                           title="Add CulArt Job")
+
+@admin.route('/culart/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_culart(id):
+    """
+    Edit a cularts
+    """
+    check_admin()
+
+    add_culart = False
+
+    culart = CulArt.query.get_or_404(id)
+    form = CulArtForm(obj=bike)
+    if form.validate_on_submit():
+        culart.name = form.name.data
+        culart.description = form.description.data
+        culart.date = form.date.data
+        culart.start = form.start_at.data
+        culart.end = form.end_at.data
+        culart.fsp = form.fsp.data
+        culart.numPeople = form.numPeople.data
+        db.session.commit()
+        flash('You have successfully edited the CulArt Job.')
+
+        # redirect to the culart job page
+        return redirect(url_for('admin.list_cularts'))
+
+    form.name.data = culart.name
+    form.description.data = culart.description
+
+    culart.date = form.date.data
+    culart.start = form.start_at.data
+    culart.end = form.end_at.data
+    return render_template('admin/cularts/culart.html', action="Edit",
+                           add_culart=add_culart, form=form,
+                           culart=culart, title="Edit CulArt Job")
+
+@admin.route('/culart/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_culart(id):
+    """
+    Delete a cularts job from the database
+    """
+    check_admin()
+
+    culart = CulArt.query.get_or_404(id)
+    db.session.delete(culart)
+    db.session.commit()
+    flash('You have successfully deleted the CulArt job.')
+
+    # redirect to the culart job page
+    return redirect(url_for('admin.list_cularts'))
+
+    return render_template(title="Delete CulArt Job")
+
+# Merch Views
+
+@admin.route('/merch', methods=['GET', 'POST'])
+@login_required
+def list_merch():
+    """
+    List all merch jobs
+    """
+    check_admin()
+
+    merchs = Merch.query.all()
+
+    return render_template('admin/merchs/merchs.html',
+                           merchs=merchs, title="Merch Jobs")
+
+@admin.route('/merch/add', methods=['GET', 'POST'])
+@login_required
+def add_merch():
+    """
+    Add a merch job to the database
+    """
+    check_admin()
+
+    add_merch = True
+
+    form = MerchForm()
+    if form.validate_on_submit():
+        merch = Merch(name=form.name.data,
+                                description=form.description.data,
+                                start=form.start_at.data,
+                                end=form.end_at.data,
+                                fsp=form.fsp.data,
+                                numPeople=form.numPeople.data)
+        try:
+            # add merch job to the database
+            db.session.add(merch)
+            db.session.commit()
+            flash('You have successfully added a new Merch Job.')
+        except:
+            # in case merch job name already exists
+            flash('Error: this Merch Job already exists.')
+
+        # redirect to merch job page
+        return redirect(url_for('admin.list_merch'))
+
+    # load merch template
+    return render_template('admin/merchs/merch.html', action="Add",
+                           add_merch=add_merch, form=form,
+                           title="Add Merch Job")
+
+@admin.route('/merch/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_merch(id):
+    """
+    Edit a merch
+    """
+    check_admin()
+
+    add_merch = False
+
+    merch = Merch.query.get_or_404(id)
+    form = MerchForm(obj=merch)
+    if form.validate_on_submit():
+        merch.name = form.name.data
+        merch.description = form.description.data
+        merch.date = form.date.data
+        merch.start = form.start_at.data
+        merch.end = form.end_at.data
+        merch.fsp = form.fsp.data
+        merch.numPeople = form.numPeople.data
+        db.session.commit()
+        flash('You have successfully edited the Merch Job.')
+
+        # redirect to the merch job page
+        return redirect(url_for('admin.list_merch'))
+
+    form.name.data = merch.name
+    form.description.data = merch.description
+
+    merch.date = form.date.data
+    merch.start = form.start_at.data
+    merch.end = form.end_at.data
+    return render_template('admin/merchs/merch.html', action="Edit",
+                           add_merch=add_merch, form=form,
+                           merch=merch, title="Edit Merch Job")
+
+@admin.route('/merch/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_merch(id):
+    """
+    Delete a merch job from the database
+    """
+    check_admin()
+
+    merch = Merch.query.get_or_404(id)
+    db.session.delete(merch)
+    db.session.commit()
+    flash('You have successfully deleted the Merch job.')
+
+    # redirect to the merch job page
+    return redirect(url_for('admin.list_merch'))
+
+    return render_template(title="Delete Merch Job")
+
+# Spirit Views
+
+@admin.route('/spirit', methods=['GET', 'POST'])
+@login_required
+def list_spirit():
+    """
+    List all spirit jobs
+    """
+    check_admin()
+
+    spirits = Spirit.query.all()
+
+    return render_template('admin/spirits/spirits.html',
+                           spirits=spirits, title="Spirit Jobs")
+
+@admin.route('/spirit/add', methods=['GET', 'POST'])
+@login_required
+def add_spirit():
+    """
+    Add a spirit job to the database
+    """
+    check_admin()
+
+    add_spirit = True
+
+    form = SpiritForm()
+    if form.validate_on_submit():
+        spirit = Spirit(name=form.name.data,
+                                description=form.description.data,
+                                start=form.start_at.data,
+                                end=form.end_at.data,
+                                fsp=form.fsp.data,
+                                numPeople=form.numPeople.data)
+        try:
+            # add spirit job to the database
+            db.session.add(spirit)
+            db.session.commit()
+            flash('You have successfully added a new Spirit Job.')
+        except:
+            # in case spirit job name already exists
+            flash('Error: this Spirit Job already exists.')
+
+        # redirect to spirit job page
+        return redirect(url_for('admin.list_spirit'))
+
+    # load spirit template
+    return render_template('admin/spirits/spirit.html', action="Add",
+                           add_spirit=add_spirit, form=form,
+                           title="Add Spirit Job")
+
+@admin.route('/spirit/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_spirit(id):
+    """
+    Edit a spirit job
+    """
+    check_admin()
+
+    add_spirit = False
+
+    spirit = Spirit.query.get_or_404(id)
+    form = SpiritForm(obj=spirit)
+    if form.validate_on_submit():
+        spirit.name = form.name.data
+        spirit.description = form.description.data
+        spirit.date = form.date.data
+        spirit.start = form.start_at.data
+        spirit.end = form.end_at.data
+        spirit.fsp = form.fsp.data
+        spirit.numPeople = form.numPeople.data
+        db.session.commit()
+        flash('You have successfully edited the Spirit Job.')
+
+        # redirect to the spirit job page
+        return redirect(url_for('admin.list_spirit'))
+
+    form.name.data = spirit.name
+    form.description.data = spirit.description
+
+    spirit.date = form.date.data
+    spirit.start = form.start_at.data
+    spirit.end = form.end_at.data
+    return render_template('admin/spirits/spirit.html', action="Edit",
+                           add_spirit=add_spirit, form=form,
+                           spirit=spirit, title="Edit Spirit Job")
+
+@admin.route('/spirit/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_spirit(id):
+    """
+    Delete a spirit job from the database
+    """
+    check_admin()
+
+    spirit = Spirit.query.get_or_404(id)
+    db.session.delete(spirit)
+    db.session.commit()
+    flash('You have successfully deleted the Spirit job.')
+
+    # redirect to the spirit job page
+    return redirect(url_for('admin.list_spirit'))
+
+    return render_template(title="Delete Spirit Job")
+
+# Socials Views
+
+@admin.route('/socials', methods=['GET', 'POST'])
+@login_required
+def list_socials():
+    """
+    List all socials jobs
+    """
+    check_admin()
+
+    socials = Socials.query.all()
+
+    return render_template('admin/socials/socials.html',
+                           socials=socials, title="Socials Jobs")
+
+@admin.route('/socials/add', methods=['GET', 'POST'])
+@login_required
+def add_social():
+    """
+    Add a socials job to the database
+    """
+    check_admin()
+
+    add_social = True
+
+    form = SocialsForm()
+    if form.validate_on_submit():
+        social = Socials(name=form.name.data,
+                                description=form.description.data,
+                                start=form.start_at.data,
+                                end=form.end_at.data,
+                                fsp=form.fsp.data,
+                                numPeople=form.numPeople.data)
+        try:
+            # add socials job to the database
+            db.session.add(social)
+            db.session.commit()
+            flash('You have successfully added a new Socials Job.')
+        except:
+            # in case socials job name already exists
+            flash('Error: this Socials Job already exists.')
+
+        # redirect to socials job page
+        return redirect(url_for('admin.list_socials'))
+
+    # load socials template
+    return render_template('admin/socials/social.html', action="Add",
+                           add_social=add_social, form=form,
+                           title="Add Socials Job")
+
+@admin.route('/socials/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_social(id):
+    """
+    Edit a socials
+    """
+    check_admin()
+
+    add_social = False
+
+    social = Socials.query.get_or_404(id)
+    form = SocialsForm(obj=social)
+    if form.validate_on_submit():
+        social.name = form.name.data
+        social.description = form.description.data
+        social.date = form.date.data
+        social.start = form.start_at.data
+        social.end = form.end_at.data
+        social.fsp = form.fsp.data
+        social.numPeople = form.numPeople.data
+        db.session.commit()
+        flash('You have successfully edited the Socials Job.')
+
+        # redirect to the socials job page
+        return redirect(url_for('admin.list_socials'))
+
+    form.name.data = social.name
+    form.description.data = social.description
+
+    social.date = form.date.data
+    social.start = form.start_at.data
+    social.end = form.end_at.data
+    return render_template('admin/socials/social.html', action="Edit",
+                           add_social=add_social, form=form,
+                           social=social, title="Edit Socials Job")
+
+@admin.route('/socials/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_social(id):
+    """
+    Delete a socials job from the database
+    """
+    check_admin()
+
+    social = Socials.query.get_or_404(id)
+    db.session.delete(social)
+    db.session.commit()
+    flash('You have successfully deleted the Socials job.')
+
+    # redirect to the socials job page
+    return redirect(url_for('admin.list_socials'))
+
+    return render_template(title="Delete Socials Job")
+
+# Slush Views
+
+@admin.route('/slush', methods=['GET', 'POST'])
+@login_required
+def list_slush():
+    """
+    List all slush jobs
+    """
+    check_admin()
+
+    slushs = Slush.query.all()
+
+    return render_template('admin/slushs/slushs.html',
+                           slushs=slushs, title="Slush Jobs")
+
+@admin.route('/slush/add', methods=['GET', 'POST'])
+@login_required
+def add_slush():
+    """
+    Add a slush job to the database
+    """
+    check_admin()
+
+    add_slush = True
+
+    form = SlushForm()
+    if form.validate_on_submit():
+        slush = Slush(name=form.name.data,
+                                description=form.description.data,
+                                start=form.start_at.data,
+                                end=form.end_at.data,
+                                fsp=form.fsp.data,
+                                numPeople=form.numPeople.data)
+        try:
+            # add slush job to the database
+            db.session.add(slush)
+            db.session.commit()
+            flash('You have successfully added a new Slush Job.')
+        except:
+            # in case slush job name already exists
+            flash('Error: this Slush Job already exists.')
+
+        # redirect to slush job page
+        return redirect(url_for('admin.list_slush'))
+
+    # load slush template
+    return render_template('admin/slushs/slush.html', action="Add",
+                           add_slush=add_slush, form=form,
+                           title="Add Slush Job")
+
+@admin.route('/slush/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_slush(id):
+    """
+    Edit a slush
+    """
+    check_admin()
+
+    add_slush = False
+
+    slush = Slush.query.get_or_404(id)
+    form = SlushForm(obj=merch)
+    if form.validate_on_submit():
+        slush.name = form.name.data
+        slush.description = form.description.data
+        slush.date = form.date.data
+        slush.start = form.start_at.data
+        slush.end = form.end_at.data
+        slush.fsp = form.fsp.data
+        slush.numPeople = form.numPeople.data
+        db.session.commit()
+        flash('You have successfully edited the Slush Job.')
+
+        # redirect to the slush job page
+        return redirect(url_for('admin.list_slush'))
+
+    form.name.data = slush.name
+    form.description.data = slush.description
+
+    slush.date = form.date.data
+    slush.start = form.start_at.data
+    slush.end = form.end_at.data
+    return render_template('admin/slushs/slush.html', action="Edit",
+                           add_slush=add_slush, form=form,
+                           slush=slush, title="Edit Slush Job")
+
+@admin.route('/slush/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_slush(id):
+    """
+    Delete a slush job from the database
+    """
+    check_admin()
+
+    slush = Slush.query.get_or_404(id)
+    db.session.delete(slush)
+    db.session.commit()
+    flash('You have successfully deleted the Slush job.')
+
+    # redirect to the slush job page
+    return redirect(url_for('admin.list_slush'))
+
+    return render_template(title="Delete Slush Job")
+
+# Role Views
 
 @admin.route('/roles')
 @login_required
@@ -125,7 +859,6 @@ def list_roles():
     roles = Role.query.all()
     return render_template('admin/roles/roles.html',
                            roles=roles, title='Roles')
-
 
 @admin.route('/roles/add', methods=['GET', 'POST'])
 @login_required
@@ -158,7 +891,6 @@ def add_role():
     return render_template('admin/roles/role.html', add_role=add_role,
                            form=form, title='Add Role')
 
-
 @admin.route('/roles/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_role(id):
@@ -186,7 +918,6 @@ def edit_role(id):
     return render_template('admin/roles/role.html', add_role=add_role,
                            form=form, title="Edit Role")
 
-
 @admin.route('/roles/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_role(id):
@@ -205,6 +936,8 @@ def delete_role(id):
 
     return render_template(title="Delete Role")
 
+# Freshman Views
+
 @admin.route('/freshmans', methods=['GET', 'POST'])
 @login_required
 def list_freshmans():
@@ -217,7 +950,6 @@ def list_freshmans():
 
     return render_template('admin/freshmans/freshmans.html',
                            freshman=freshmans, title="Freshmans")
-
 
 @admin.route('/freshmans/add', methods=['GET', 'POST'])
 @login_required
@@ -250,7 +982,6 @@ def add_freshman():
                            add_freshman=add_freshman, form=form,
                            title="Add Freshman")
 
-
 @admin.route('/freshmans/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_freshman(id):
@@ -278,7 +1009,6 @@ def edit_freshman(id):
                            add_freshman=add_freshman, form=form,
                            freshman=freshman, title="Edit Freshman")
 
-
 @admin.route('/freshmans/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_freshman(id):
@@ -296,6 +1026,8 @@ def delete_freshman(id):
     return redirect(url_for('admin.list_freshman'))
 
     return render_template(title="Delete freshman")
+
+# Employees Views
 
 @admin.route('/employees')
 @login_required

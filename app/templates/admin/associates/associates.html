@@ -1,0 +1,70 @@
+{% import "bootstrap/utils.html" as utils %}
+{% extends "base.html" %}
+{% block title %}Associates{% endblock %}
+{% block body %}
+  <div class="content-section">
+    <div class="outer">
+      <div class="middle">
+        <div class="inner">
+          <br/>
+          {{ utils.flashed_messages() }}
+          <br/>
+          <h1 style="text-align:center;">Associates FSP Jobs</h1>
+          {% if associates %}
+            <hr class="intro-divider">
+            <div class="center">
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th width="20%"; style="text-align:center"> Job Name </th>
+                    <th width="27%"; style="text-align:center"> Description </th>
+                    <th width="10%"; style="text-align:center"> Date </th>
+                    <th width="10%"; style="text-align:center"> Start </th>
+                    <th width="10%"; style="text-align:center"> End </th>
+                    <th width="10%"; style="text-align:center"> FSP </th>
+                    <th width="12%"; style="text-align:center"> # People </th>
+                    <th width="9%"; style="text-align:center"> Edit </th>
+                    <th width="12%"; style="text-align:center"> Delete </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for associate in associates %}
+                    <tr>
+                      <td> {{ associate.name }} </td>
+                      <td> {{ associate.description }} </td>
+                      <td> {{ associate.date }} </td>
+                      <td> {{ associate.start }} </td>
+                      <td> {{ associate.end }} </td>
+                      <td> {{ associate.fsp }} </td>
+                      <td> {{ associate.numPeople }} </td>
+                      <td>
+                        <a href="{{ url_for('admin.edit_associate', id=associate.id) }}">
+                          <i class="fa fa-pencil"></i> Edit
+                        </a>
+                      </td>
+                      <td>
+                        <a href="{{ url_for('admin.delete_associate', id=associate.id) }}">
+                          <i class="fa fa-trash"></i> Delete
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div style="text-align: center">
+            {% else %}
+              <div style="text-align: center">
+                <h3> No Associates Jobs have been added. </h3>
+                <hr class="intro-divider">
+              {% endif %}
+              <a href="{{ url_for('admin.add_associate') }}" class="btn btn-default btn-lg">
+                <i class="fa fa-plus"></i>
+                Add Associates Jobs
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endblock %}

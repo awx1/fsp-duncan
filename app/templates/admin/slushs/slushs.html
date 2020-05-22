@@ -1,0 +1,70 @@
+{% import "bootstrap/utils.html" as utils %}
+{% extends "base.html" %}
+{% block title %}Slush{% endblock %}
+{% block body %}
+  <div class="content-section">
+    <div class="outer">
+      <div class="middle">
+        <div class="inner">
+          <br/>
+          {{ utils.flashed_messages() }}
+          <br/>
+          <h1 style="text-align:center;">Slush FSP Jobs</h1>
+          {% if spirits %}
+            <hr class="intro-divider">
+            <div class="center">
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th width="20%"; style="text-align:center"> Job Name </th>
+                    <th width="27%"; style="text-align:center"> Description </th>
+                    <th width="10%"; style="text-align:center"> Date </th>
+                    <th width="10%"; style="text-align:center"> Start </th>
+                    <th width="10%"; style="text-align:center"> End </th>
+                    <th width="10%"; style="text-align:center"> FSP </th>
+                    <th width="12%"; style="text-align:center"> # People </th>
+                    <th width="9%"; style="text-align:center"> Edit </th>
+                    <th width="12%"; style="text-align:center"> Delete </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for slush in slushs %}
+                    <tr>
+                      <td> {{ slush.name }} </td>
+                      <td> {{ slush.description }} </td>
+                      <td> {{ slush.date }} </td>
+                      <td> {{ slush.start }} </td>
+                      <td> {{ slush.end }} </td>
+                      <td> {{ slush.fsp }} </td>
+                      <td> {{ slush.numPeople }} </td>
+                      <td>
+                        <a href="{{ url_for('admin.edit_slush', id=slush.id) }}">
+                          <i class="fa fa-pencil"></i> Edit
+                        </a>
+                      </td>
+                      <td>
+                        <a href="{{ url_for('admin.delete_slush', id=slush.id) }}">
+                          <i class="fa fa-trash"></i> Delete
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div style="text-align: center">
+            {% else %}
+              <div style="text-align: center">
+                <h3> No Slush Jobs have been added. </h3>
+                <hr class="intro-divider">
+              {% endif %}
+              <a href="{{ url_for('admin.add_slush') }}" class="btn btn-default btn-lg">
+                <i class="fa fa-plus"></i>
+                Add Slush Jobs
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endblock %}

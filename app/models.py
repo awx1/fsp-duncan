@@ -83,7 +83,9 @@ class Department(db.Model):
     name = db.Column(db.String(60), unique=True)
     description = db.Column(db.String(200))
     date = db.Column(db.Date)
-    time = db.Column(db.Time)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Integer)
     numPeople = db.Column(db.Integer)
     # employees = db.relationship('Employee', backref='department',
     #                             lazy='dynamic')
@@ -91,6 +93,150 @@ class Department(db.Model):
     def __repr__(self):
         return '<Department: {}>'.format(self.name)
 
+class Associates(db.Model):
+    """
+    Create a Department table
+    """
+
+    __tablename__ = 'associates'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Integer)
+    numPeople = db.Column(db.Integer)
+    # employees = db.relationship('Employee', backref='department',
+    #                             lazy='dynamic')
+
+    def __repr__(self):
+        return '<Associates: {}>'.format(self.name)
+
+class Bike(db.Model):
+    """
+    Create a Department table
+    """
+
+    __tablename__ = 'bike'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Integer)
+    numPeople = db.Column(db.Integer)
+    # employees = db.relationship('Employee', backref='department',
+    #                             lazy='dynamic')
+
+    def __repr__(self):
+        return '<Bike: {}>'.format(self.name)
+
+class CulArt(db.Model):
+    """
+    Create a Department table
+    """
+
+    __tablename__ = 'culart'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Integer)
+    numPeople = db.Column(db.Integer)
+    # employees = db.relationship('Employee', backref='department',
+    #                             lazy='dynamic')
+
+    def __repr__(self):
+        return '<CulArt: {}>'.format(self.name)
+
+class Merch(db.Model):
+    """
+    Create a Department table
+    """
+
+    __tablename__ = 'merch'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Integer)
+    numPeople = db.Column(db.Integer)
+    # employees = db.relationship('Employee', backref='department',
+    #                             lazy='dynamic')
+
+    def __repr__(self):
+        return '<Merch: {}>'.format(self.name)
+
+class Spirit(db.Model):
+    """
+    Create a Department table
+    """
+
+    __tablename__ = 'spirit'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Integer)
+    numPeople = db.Column(db.Integer)
+    # employees = db.relationship('Employee', backref='department',
+    #                             lazy='dynamic')
+
+    def __repr__(self):
+        return '<Spirit: {}>'.format(self.name)
+
+class Socials(db.Model):
+    """
+    Create a Socials table
+    """
+
+    __tablename__ = 'socials'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Integer)
+    numPeople = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Socials: {}>'.format(self.name)
+
+class Slush(db.Model):
+    """
+    Create a Department table
+    """
+
+    __tablename__ = 'slush'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Integer)
+    numPeople = db.Column(db.Integer)
+    # employees = db.relationship('Employee', backref='department',
+    #                             lazy='dynamic')
+
+    def __repr__(self):
+        return '<Slush: {}>'.format(self.name)
 
 # class Role(db.Model):
 #     """
