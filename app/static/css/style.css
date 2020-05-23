@@ -1,6 +1,18 @@
 body, html {
     width: 100%;
     height: 100%;
+    margin:0;
+    padding:0;
+}
+
+.intro-header {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    text-align: center;
+    color: #f8f8f8;
+    background: url(../img/duncan.jpg) no-repeat center center;
+    background-size: cover;
+    height: 100%;
 }
 
 body, h1, h2, h3 {
@@ -16,15 +28,19 @@ a:hover, .navbar-default .navbar-brand:hover, .navbar-default .navbar-nav>li>a:h
   color: #687430;
 }
 
-footer {
-    padding: 50px 0;
-    background-color: #f8f8f8;
-}
-
+/* Format of Copyright */
 p.copyright {
     margin: 15px 0 0;
 }
 
+/* Format of Footer */
+footer {
+    padding: 25px 0;
+    background-color: #f8f8f8;
+    bottom: 0;
+}
+
+/* Format of Alerts: Add, Edit, Delete Jobs, Logout */
 .alert-info {
     width: 50%;
     margin: auto;
@@ -33,45 +49,21 @@ p.copyright {
     border-color: #aec251;
 }
 
+/* Format of Button */
 .btn-default {
     border-color: #aec251;
     color: #aec251;
 }
 
+/* Format of Button when hovered */
 .btn-default:hover {
     background-color: #aec251;
 }
 
 .center {
     margin: auto;
-    width: 50%;
+    width: 80%;
     padding: 10px;
-}
-
-.content-section {
-    padding: 50px 0;
-    border-top: 1px solid #e7e7e7;
-}
-
-.footer, .push {
-  clear: both;
-  height: 4em;
-}
-
-.intro-divider {
-    width: 400px;
-    border-top: 1px solid #f8f8f8;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-}
-
-.intro-header {
-    padding-top: 50px;
-    padding-bottom: 50px;
-    text-align: center;
-    color: #f8f8f8;
-    background: url(../img/duncan.jpg) no-repeat center center;
-    background-size: cover;
-    height: 100%;
 }
 
 .intro-message {
@@ -88,6 +80,25 @@ p.copyright {
 
 .intro-message > h3 {
     text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+}
+
+/* Fixes display messages */
+.content-section {
+    padding: 50px 0;
+    border-top: 1px solid #e7e7e7;
+}
+
+/*
+.footer, .push {
+  position: relative;
+  clear: both;
+  height: 4em;
+}
+
+.intro-divider {
+    width: 400px;
+    border-top: 1px solid #f8f8f8;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
 }
 
 .lead {
@@ -122,3 +133,22 @@ p.copyright {
     margin-left: auto;
     margin-right: auto;
 }
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

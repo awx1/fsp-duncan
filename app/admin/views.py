@@ -155,7 +155,6 @@ def add_associate():
                                 numPeople=form.numPeople.data,
                                 sent=False)
 
-        print(form.fsp.data)
         try:
             # add associates job to the database
             db.session.add(associate)

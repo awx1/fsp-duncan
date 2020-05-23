@@ -13,7 +13,7 @@ class DepartmentForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
-    date = DateField('Date: M/D/Y (ie. 9/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/YYYY (ie. 9/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])
@@ -23,11 +23,11 @@ class DepartmentForm(FlaskForm):
 
 class AssociatesForm(FlaskForm):
     """
-    Form for admin to add or edit a socials job
+    Form for admin to add or edit a associates job
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    date = DateField('Date: M/D/Y (ie. 9/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/YYYY (ie. 9/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])
@@ -37,11 +37,11 @@ class AssociatesForm(FlaskForm):
 
 class BikeForm(FlaskForm):
     """
-    Form for admin to add or edit a socials job
+    Form for admin to add or edit a bike job
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    date = DateField('Date: M/D/Y (ie. 9/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/YYYY (ie. 9/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])
@@ -51,11 +51,11 @@ class BikeForm(FlaskForm):
 
 class CulArtForm(FlaskForm):
     """
-    Form for admin to add or edit a socials job
+    Form for admin to add or edit a culart job
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    date = DateField('Date: M/D/Y (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/YYYY (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])
@@ -65,11 +65,11 @@ class CulArtForm(FlaskForm):
 
 class MerchForm(FlaskForm):
     """
-    Form for admin to add or edit a socials job
+    Form for admin to add or edit a merch job
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    date = DateField('Date: M/D/Y (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/YYYY (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])
@@ -83,7 +83,7 @@ class SocialsForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    date = DateField('Date: M/D/Y (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/YYYY (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])
@@ -97,7 +97,7 @@ class SpiritForm(FlaskForm):
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    date = DateField('Date: M/D/Y (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/YYYY (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])
@@ -107,11 +107,11 @@ class SpiritForm(FlaskForm):
 
 class SlushForm(FlaskForm):
     """
-    Form for admin to add or edit a socials job
+    Form for admin to add or edit a slush job
     """
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    date = DateField('Date: M/D/Y (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
+    date = DateField('Date: M/D/YYYY (ie. 09/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
     fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])

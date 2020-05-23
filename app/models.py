@@ -240,6 +240,27 @@ class Slush(db.Model):
     def __repr__(self):
         return '<Slush: {}>'.format(self.name)
 
+class Done(db.Model):
+    """
+    Create a Done table for completed jobs
+    """
+
+    __tablename__ = 'done'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    start = db.Column(db.Time)
+    end = db.Column(db.Time)
+    fsp = db.Column(db.Numeric(3,2))
+    numPeople = db.Column(db.Integer)
+    sent = db.Column(db.Boolean)
+    employees = db.Column(db.String(200))
+
+    def __repr__(self):
+        return '<Done: {}>'.format(self.name)
+
 # class Role(db.Model):
 #     """
 #     Create a Role table

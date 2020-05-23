@@ -25,3 +25,9 @@
   pip install Flask-Testing
 
   pip install WTForms-Components
+
+  Need to edit: /Users/alexanderxiong/Documents/Personal/Projects/FSP/example3/python-flask-crud-1/.venv/lib/python2.7/site-packages/wtforms/validators.py
+  Class TimeField (Add)
+  if field.data == time(hour=0, minute=0, second=0):
+    message = self.message
+  Need to handle 12:00:00 AM case
