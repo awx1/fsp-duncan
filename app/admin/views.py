@@ -152,7 +152,10 @@ def add_associate():
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
-                                numPeople=form.numPeople.data)
+                                numPeople=form.numPeople.data,
+                                sent=False)
+
+        print(form.fsp.data)
         try:
             # add associates job to the database
             db.session.add(associate)
@@ -257,7 +260,8 @@ def add_bike():
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
-                                numPeople=form.numPeople.data)
+                                numPeople=form.numPeople.data,
+                                sent=False)
         try:
             # add bikes job to the database
             db.session.add(bike)
@@ -362,7 +366,8 @@ def add_culart():
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
-                                numPeople=form.numPeople.data)
+                                numPeople=form.numPeople.data,
+                                sent=False)
         try:
             # add culart job to the database
             db.session.add(culart)
@@ -467,7 +472,8 @@ def add_merch():
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
-                                numPeople=form.numPeople.data)
+                                numPeople=form.numPeople.data,
+                                sent=False)
         try:
             # add merch job to the database
             db.session.add(merch)
@@ -572,7 +578,8 @@ def add_spirit():
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
-                                numPeople=form.numPeople.data)
+                                numPeople=form.numPeople.data,
+                                sent=False)
         try:
             # add spirit job to the database
             db.session.add(spirit)
@@ -677,7 +684,8 @@ def add_social():
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
-                                numPeople=form.numPeople.data)
+                                numPeople=form.numPeople.data,
+                                sent=False)
         try:
             # add socials job to the database
             db.session.add(social)
@@ -782,7 +790,8 @@ def add_slush():
                                 start=form.start_at.data,
                                 end=form.end_at.data,
                                 fsp=form.fsp.data,
-                                numPeople=form.numPeople.data)
+                                numPeople=form.numPeople.data,
+                                sent=False)
         try:
             # add slush job to the database
             db.session.add(slush)
@@ -971,7 +980,8 @@ def add_freshman():
     form = FreshmanForm()
     if form.validate_on_submit():
         freshman = Freshman(name=form.name.data,
-                                netID=form.netID.data)
+                                netID=form.netID.data,
+                                fsp=0)
         try:
             # add department to the database
             db.session.add(freshman)

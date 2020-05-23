@@ -46,6 +46,11 @@ class Employee(UserMixin, db.Model):
     def __repr__(self):
         return '<Employee: {}>'.format(self.username)
 
+# Set up user_loader
+@login_manager.user_loader
+def load_user(user_id):
+    return Employee.query.get(int(user_id))
+
 class Freshman(db.Model):
     """
     Create an Freshman table
@@ -61,16 +66,11 @@ class Freshman(db.Model):
     # first_name = db.Column(db.String(60), index=True)
     # last_name = db.Column(db.String(60), index=True)
     name = db.Column(db.String(60), unique=True)
-    netID = db.Column(db.String(200))
+    netID = db.Column(db.String(10))
+    fsp = db.Column(db.Float)
 
     def __repr__(self):
         return '<Freshman: {}>'.format(self.email)
-
-# Set up user_loader
-@login_manager.user_loader
-def load_user(user_id):
-    return Employee.query.get(int(user_id))
-
 
 class Department(db.Model):
     """
@@ -85,7 +85,7 @@ class Department(db.Model):
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
-    fsp = db.Column(db.Integer)
+    fsp = db.Column(db.Float)
     numPeople = db.Column(db.Integer)
     # employees = db.relationship('Employee', backref='department',
     #                             lazy='dynamic')
@@ -95,7 +95,7 @@ class Department(db.Model):
 
 class Associates(db.Model):
     """
-    Create a Department table
+    Create a Associates table
     """
 
     __tablename__ = 'associates'
@@ -106,17 +106,17 @@ class Associates(db.Model):
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
-    fsp = db.Column(db.Integer)
+    fsp = db.Column(db.Numeric(3,2))
     numPeople = db.Column(db.Integer)
-    # employees = db.relationship('Employee', backref='department',
-    #                             lazy='dynamic')
+    sent = db.Column(db.Boolean)
+    employees = db.Column(db.String(200))
 
     def __repr__(self):
         return '<Associates: {}>'.format(self.name)
 
 class Bike(db.Model):
     """
-    Create a Department table
+    Create a Bike table
     """
 
     __tablename__ = 'bike'
@@ -127,17 +127,17 @@ class Bike(db.Model):
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
-    fsp = db.Column(db.Integer)
+    fsp = db.Column(db.Numeric(3,2))
     numPeople = db.Column(db.Integer)
-    # employees = db.relationship('Employee', backref='department',
-    #                             lazy='dynamic')
+    sent = db.Column(db.Boolean)
+    employees = db.Column(db.String(200))
 
     def __repr__(self):
         return '<Bike: {}>'.format(self.name)
 
 class CulArt(db.Model):
     """
-    Create a Department table
+    Create a CulArt table
     """
 
     __tablename__ = 'culart'
@@ -148,17 +148,17 @@ class CulArt(db.Model):
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
-    fsp = db.Column(db.Integer)
+    fsp = db.Column(db.Numeric(3,2))
     numPeople = db.Column(db.Integer)
-    # employees = db.relationship('Employee', backref='department',
-    #                             lazy='dynamic')
+    sent = db.Column(db.Boolean)
+    employees = db.Column(db.String(200))
 
     def __repr__(self):
         return '<CulArt: {}>'.format(self.name)
 
 class Merch(db.Model):
     """
-    Create a Department table
+    Create a Merch table
     """
 
     __tablename__ = 'merch'
@@ -169,17 +169,17 @@ class Merch(db.Model):
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
-    fsp = db.Column(db.Integer)
+    fsp = db.Column(db.Numeric(3,2))
     numPeople = db.Column(db.Integer)
-    # employees = db.relationship('Employee', backref='department',
-    #                             lazy='dynamic')
+    sent = db.Column(db.Boolean)
+    employees = db.Column(db.String(200))
 
     def __repr__(self):
         return '<Merch: {}>'.format(self.name)
 
 class Spirit(db.Model):
     """
-    Create a Department table
+    Create a Spirit table
     """
 
     __tablename__ = 'spirit'
@@ -190,10 +190,10 @@ class Spirit(db.Model):
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
-    fsp = db.Column(db.Integer)
+    fsp = db.Column(db.Numeric(3,2))
     numPeople = db.Column(db.Integer)
-    # employees = db.relationship('Employee', backref='department',
-    #                             lazy='dynamic')
+    sent = db.Column(db.Boolean)
+    employees = db.Column(db.String(200))
 
     def __repr__(self):
         return '<Spirit: {}>'.format(self.name)
@@ -211,15 +211,17 @@ class Socials(db.Model):
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
-    fsp = db.Column(db.Integer)
+    fsp = db.Column(db.Numeric(3,2))
     numPeople = db.Column(db.Integer)
+    sent = db.Column(db.Boolean)
+    employees = db.Column(db.String(200))
 
     def __repr__(self):
         return '<Socials: {}>'.format(self.name)
 
 class Slush(db.Model):
     """
-    Create a Department table
+    Create a Slush table
     """
 
     __tablename__ = 'slush'
@@ -230,10 +232,10 @@ class Slush(db.Model):
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
-    fsp = db.Column(db.Integer)
+    fsp = db.Column(db.Numeric(3,2))
     numPeople = db.Column(db.Integer)
-    # employees = db.relationship('Employee', backref='department',
-    #                             lazy='dynamic')
+    sent = db.Column(db.Boolean)
+    employees = db.Column(db.String(200))
 
     def __repr__(self):
         return '<Slush: {}>'.format(self.name)
