@@ -23,6 +23,7 @@
                     <th width="10%"; style="text-align:center"> End </th>
                     <th width="10%"; style="text-align:center"> FSP </th>
                     <th width="12%"; style="text-align:center"> # People </th>
+                    <th width="9%"; style="text-align:center"> Duplicate </th>
                     <th width="9%"; style="text-align:center"> Edit </th>
                     <th width="12%"; style="text-align:center"> Delete </th>
                   </tr>
@@ -37,13 +38,11 @@
                       <td> {{ spirit.end }} </td>
                       <td> {{ spirit.fsp }} </td>
                       <td> {{ spirit.numPeople }} </td>
-                      <!-- <td>
-                        {% if spirit.employees %}
-                          {{ spirit.employees.count() }}
-                        {% else %}
-                          0
-                        {% endif %}
-                      </td> -->
+                      <td>
+                        <a href="{{ url_for('admin.duplicate_spirit', id=spirit.id) }}">
+                          <i class="fa fa-copy"></i> Duplicate
+                        </a>
+                      </td>
                       <td>
                         <a href="{{ url_for('admin.edit_spirit', id=spirit.id) }}">
                           <i class="fa fa-pencil"></i> Edit

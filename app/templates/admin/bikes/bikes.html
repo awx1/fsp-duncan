@@ -23,6 +23,7 @@
                     <th width="10%"; style="text-align:center"> End </th>
                     <th width="10%"; style="text-align:center"> FSP </th>
                     <th width="12%"; style="text-align:center"> # People </th>
+                    <th width="9%"; style="text-align:center"> Duplicate </th>
                     <th width="9%"; style="text-align:center"> Edit </th>
                     <th width="12%"; style="text-align:center"> Delete </th>
                   </tr>
@@ -37,6 +38,11 @@
                       <td> {{ bike.end }} </td>
                       <td> {{ bike.fsp }} </td>
                       <td> {{ bike.numPeople }} </td>
+                      <td>
+                        <a href="{{ url_for('admin.duplicate_bike', id=bike.id) }}">
+                          <i class="fa fa-copy"></i> Duplicate
+                        </a>
+                      </td>
                       <td>
                         <a href="{{ url_for('admin.edit_bike', id=bike.id) }}">
                           <i class="fa fa-pencil"></i> Edit
@@ -59,7 +65,7 @@
                 <hr class="intro-divider">
               {% endif %}
               <a href="{{ url_for('admin.add_bike') }}" class="btn btn-default btn-lg">
-                <i class="fa fa-plus"></i>
+                <i class="fa fa-beer"></i>
                 Add Beer Bike Job
               </a>
             </div>

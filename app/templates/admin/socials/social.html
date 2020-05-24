@@ -1,28 +1,36 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}
-    {% if add_social %}
+    {% if add_social == 1 %}
         Add Socials Job
-    {% else %}
+    {% endif %}
+    {% if add_social == 2 %}
         Edit Socials Job
+    {% endif %}
+    {% if add_social == 3 %}
+        Duplicate Socials Job
     {% endif %}
 {% endblock %}
 {% block body %}
-<div class="content-section">
- <div class="outer">
-    <div class="middle">
-      <div class="inner">
-        <div class="center">
-            {% if add_social %}
-                <h1>Add Socials Job</h1>
-            {% else %}
-                <h1>Edit Socials Job</h1>
-            {% endif %}
-            <br/>
-            {{ wtf.quick_form(form) }}
+    <div class="content-section">
+        <div class="outer">
+            <div class="middle">
+                <div class="inner">
+                    <div class="center">
+                        {% if add_social == 1 %}
+                            <h1>Add Socials Job<h1>
+                        {% endif %}
+                        {% if add_social == 2 %}
+                            <h1>Edit Socials Job<h1>
+                        {% endif %}
+                        {% if add_social == 3 %}
+                            <h1>Duplicate Socials Job<h1>
+                        {% endif %}
+                        <br/>
+                        {{ wtf.quick_form(form) }}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}

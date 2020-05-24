@@ -1,28 +1,36 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}
-    {% if add_culart %}
+    {% if add_culart == 1 %}
         Add C & A Job
-    {% else %}
+    {% endif %}
+    {% if add_culart == 2 %}
         Edit C & A Job
+    {% endif %}
+    {% if add_culart == 3 %}
+        Duplicate C & A Job
     {% endif %}
 {% endblock %}
 {% block body %}
-<div class="content-section">
- <div class="outer">
-    <div class="middle">
-      <div class="inner">
-        <div class="center">
-            {% if add_culart %}
-                <h1>Add C & A Job</h1>
-            {% else %}
-                <h1>Edit C & A Job</h1>
-            {% endif %}
-            <br/>
-            {{ wtf.quick_form(form) }}
+    <div class="content-section">
+        <div class="outer">
+            <div class="middle">
+                <div class="inner">
+                    <div class="center">
+                        {% if add_culart == 1 %}
+                            <h1>Add C & A Job<h1>
+                        {% endif %}
+                        {% if add_culart == 2 %}
+                            <h1>Edit C & A Job<h1>
+                        {% endif %}
+                        {% if add_culart == 3 %}
+                            <h1>Duplicate C & A Job<h1>
+                        {% endif %}
+                        <br/>
+                        {{ wtf.quick_form(form) }}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}

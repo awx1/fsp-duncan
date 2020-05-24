@@ -88,39 +88,13 @@ footer {
     border-top: 1px solid #e7e7e7;
 }
 
-/*
-.footer, .push {
-  position: relative;
-  clear: both;
-  height: 4em;
-}
-
-.intro-divider {
-    width: 400px;
-    border-top: 1px solid #f8f8f8;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-}
-
-.lead {
-    font-size: 18px;
-    font-weight: 400;
-}
-
 .topnav {
     font-size: 14px;
 }
 
-.wrapper {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  margin: 0 auto -4em;
-}
-
 .outer {
     display: table;
-    position: absolute;
-    height: 70%;
+    position: relative;
     width: 100%;
 }
 
@@ -133,7 +107,16 @@ footer {
     margin-left: auto;
     margin-right: auto;
 }
-*/
+
+.footer, .push {
+  position: relative;
+  clear: both;
+  height: 4em;
+}
+
+.form-group {
+    font-size: 14px;
+}
 
 
 

@@ -142,7 +142,7 @@ def add_associate():
     """
     check_admin()
 
-    add_associate = True
+    add_associate = 1
 
     form = AssociatesForm()
     if form.validate_on_submit():
@@ -172,6 +172,54 @@ def add_associate():
                            add_associate=add_associate, form=form,
                            title="Add Associates Job")
 
+@admin.route('/associates/dup/<int:id>', methods=['GET', 'POST'])
+@login_required
+def duplicate_associate(id):
+    """
+    Duplicate an associate job from the database
+    """
+    check_admin()
+
+    add_associate = 3
+
+    associate = Associates.query.get_or_404(id)
+
+    iter_num = associate.name[-1]
+    try:
+        iter_num = int(iter_num) + 1
+    except:
+        iter_num = 1
+
+    if (iter_num > 1):
+        name = associate.name[:-1] + str(iter_num)
+    else:
+        name = associate.name + " " + str(iter_num)
+    
+    dup_associate = Associates(name=name,
+                            description=associate.description,
+                            date=associate.date,
+                            start=associate.start,
+                            end=associate.end,
+                            fsp=associate.fsp,
+                            numPeople=associate.numPeople,
+                            sent=associate.sent)
+    
+    try:
+        # add associates job to the database
+        db.session.add(dup_associate)
+        db.session.commit()
+        flash('You have successfully duplicated the Associates job.')
+    except:
+        # in case associates job name already exists
+        flash('Error: this Associates Job already exists.')
+
+    # redirect to the associate job page
+    return redirect(url_for('admin.list_associates'))
+
+    return render_template('admin/associates/associate.html', action="Duplicate",
+                           add_associate=add_associate,
+                           title="Add Associates Job")
+
 @admin.route('/associates/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_associate(id):
@@ -180,7 +228,7 @@ def edit_associate(id):
     """
     check_admin()
 
-    add_associate = False
+    add_associate = 2
 
     associate = Associates.query.get_or_404(id)
     form = AssociatesForm(obj=associate)
@@ -277,6 +325,54 @@ def add_bike():
     return render_template('admin/bikes/bike.html', action="Add",
                            add_bike=add_bike, form=form,
                            title="Add Beer Bike Job")
+
+@admin.route('/bike/dup/<int:id>', methods=['GET', 'POST'])
+@login_required
+def duplicate_bike(id):
+    """
+    Duplicate a bike job from the database
+    """
+    check_admin()
+
+    add_bike = 3
+
+    bike = Bike.query.get_or_404(id)
+
+    iter_num = bike.name[-1]
+    try:
+        iter_num = int(iter_num) + 1
+    except:
+        iter_num = 1
+
+    if (iter_num > 1):
+        name = bike.name[:-1] + str(iter_num)
+    else:
+        name = bike.name + " " + str(iter_num)
+    
+    dup_bike = Bike(name=name,
+                            description=bike.description,
+                            date=bike.date,
+                            start=bike.start,
+                            end=bike.end,
+                            fsp=bike.fsp,
+                            numPeople=bike.numPeople,
+                            sent=bike.sent)
+    
+    try:
+        # add bike job to the database
+        db.session.add(dup_bike)
+        db.session.commit()
+        flash('You have successfully duplicated the Bike job.')
+    except:
+        # in case bike job name already exists
+        flash('Error: this Bike Job already exists.')
+
+    # redirect to the bike job page
+    return redirect(url_for('admin.list_bikes'))
+
+    return render_template('admin/bikes/bike.html', action="Duplicate",
+                           add_bike=add_bike,
+                           title="Add Bike Job")
 
 @admin.route('/bike/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -384,6 +480,54 @@ def add_culart():
                            add_culart=add_culart, form=form,
                            title="Add C & A Job")
 
+@admin.route('/culart/dup/<int:id>', methods=['GET', 'POST'])
+@login_required
+def duplicate_culart(id):
+    """
+    Duplicate a culart job from the database
+    """
+    check_admin()
+
+    add_culart = 3
+
+    culart = CulArt.query.get_or_404(id)
+
+    iter_num = culart.name[-1]
+    try:
+        iter_num = int(iter_num) + 1
+    except:
+        iter_num = 1
+
+    if (iter_num > 1):
+        name = culart.name[:-1] + str(iter_num)
+    else:
+        name = culart.name + " " + str(iter_num)
+    
+    dup_culart = CulArt(name=name,
+                            description=culart.description,
+                            date=culart.date,
+                            start=culart.start,
+                            end=culart.end,
+                            fsp=culart.fsp,
+                            numPeople=culart.numPeople,
+                            sent=culart.sent)
+    
+    try:
+        # add culart job to the database
+        db.session.add(dup_culart)
+        db.session.commit()
+        flash('You have successfully duplicated the CulArt job.')
+    except:
+        # in case culart job name already exists
+        flash('Error: this CulArt Job already exists.')
+
+    # redirect to the culart job page
+    return redirect(url_for('admin.list_cularts'))
+
+    return render_template('admin/cularts/culart.html', action="Duplicate",
+                           add_culart=add_culart,
+                           title="Add CulArt Job")
+
 @admin.route('/culart/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_culart(id):
@@ -488,6 +632,54 @@ def add_merch():
     # load merch template
     return render_template('admin/merchs/merch.html', action="Add",
                            add_merch=add_merch, form=form,
+                           title="Add Merch Job")
+
+@admin.route('/merch/dup/<int:id>', methods=['GET', 'POST'])
+@login_required
+def duplicate_merch(id):
+    """
+    Duplicate a merch job from the database
+    """
+    check_admin()
+
+    add_merch = 3
+
+    merch = Merch.query.get_or_404(id)
+
+    iter_num = merch.name[-1]
+    try:
+        iter_num = int(iter_num) + 1
+    except:
+        iter_num = 1
+
+    if (iter_num > 1):
+        name = merch.name[:-1] + str(iter_num)
+    else:
+        name = merch.name + " " + str(iter_num)
+    
+    dup_merch = Merch(name=name,
+                            description=merch.description,
+                            date=merch.date,
+                            start=merch.start,
+                            end=merch.end,
+                            fsp=merch.fsp,
+                            numPeople=merch.numPeople,
+                            sent=merch.sent)
+    
+    try:
+        # add merch job to the database
+        db.session.add(dup_merch)
+        db.session.commit()
+        flash('You have successfully duplicated the Merch job.')
+    except:
+        # in case merch job name already exists
+        flash('Error: this Merch Job already exists.')
+
+    # redirect to the merch job page
+    return redirect(url_for('admin.list_merch'))
+
+    return render_template('admin/merchs/merch.html', action="Duplicate",
+                           add_merch=add_merch,
                            title="Add Merch Job")
 
 @admin.route('/merch/edit/<int:id>', methods=['GET', 'POST'])
@@ -596,6 +788,54 @@ def add_spirit():
                            add_spirit=add_spirit, form=form,
                            title="Add Spirit Job")
 
+@admin.route('/spirit/dup/<int:id>', methods=['GET', 'POST'])
+@login_required
+def duplicate_spirit(id):
+    """
+    Duplicate a spirit job from the database
+    """
+    check_admin()
+
+    add_spirit = 3
+
+    spirit = Spirit.query.get_or_404(id)
+
+    iter_num = spirit.name[-1]
+    try:
+        iter_num = int(iter_num) + 1
+    except:
+        iter_num = 1
+
+    if (iter_num > 1):
+        name = spirit.name[:-1] + str(iter_num)
+    else:
+        name = spirit.name + " " + str(iter_num)
+    
+    dup_spirit = Spirit(name=name,
+                            description=spirit.description,
+                            date=spirit.date,
+                            start=spirit.start,
+                            end=spirit.end,
+                            fsp=spirit.fsp,
+                            numPeople=spirit.numPeople,
+                            sent=spirit.sent)
+    
+    try:
+        # add spirit job to the database
+        db.session.add(dup_spirit)
+        db.session.commit()
+        flash('You have successfully duplicated the Spirit job.')
+    except:
+        # in case spirit job name already exists
+        flash('Error: this Spirit Job already exists.')
+
+    # redirect to the spirit job page
+    return redirect(url_for('admin.list_spirit'))
+
+    return render_template('admin/spirits/spirit.html', action="Duplicate",
+                           add_spirit=add_spirit,
+                           title="Add Spirit Job")
+
 @admin.route('/spirit/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_spirit(id):
@@ -702,6 +942,54 @@ def add_social():
                            add_social=add_social, form=form,
                            title="Add Socials Job")
 
+@admin.route('/social/dup/<int:id>', methods=['GET', 'POST'])
+@login_required
+def duplicate_social(id):
+    """
+    Duplicate a social job from the database
+    """
+    check_admin()
+
+    add_social = 3
+
+    social = Socials.query.get_or_404(id)
+
+    iter_num = social.name[-1]
+    try:
+        iter_num = int(iter_num) + 1
+    except:
+        iter_num = 1
+
+    if (iter_num > 1):
+        name = social.name[:-1] + str(iter_num)
+    else:
+        name = social.name + " " + str(iter_num)
+    
+    dup_social = Socials(name=name,
+                            description=social.description,
+                            date=social.date,
+                            start=social.start,
+                            end=social.end,
+                            fsp=social.fsp,
+                            numPeople=social.numPeople,
+                            sent=social.sent)
+    
+    try:
+        # add socials job to the database
+        db.session.add(dup_social)
+        db.session.commit()
+        flash('You have successfully duplicated the Socials job.')
+    except:
+        # in case socials job name already exists
+        flash('Error: this Socials Job already exists.')
+
+    # redirect to the socials job page
+    return redirect(url_for('admin.list_socials'))
+
+    return render_template('admin/socials/social.html', action="Duplicate",
+                           add_social=add_social,
+                           title="Add Socials Job")
+
 @admin.route('/socials/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_social(id):
@@ -806,6 +1094,54 @@ def add_slush():
     # load slush template
     return render_template('admin/slushs/slush.html', action="Add",
                            add_slush=add_slush, form=form,
+                           title="Add Slush Job")
+
+@admin.route('/slush/dup/<int:id>', methods=['GET', 'POST'])
+@login_required
+def duplicate_slush(id):
+    """
+    Duplicate a slush job from the database
+    """
+    check_admin()
+
+    add_slush = 3
+
+    slush = Slush.query.get_or_404(id)
+
+    iter_num = slush.name[-1]
+    try:
+        iter_num = int(iter_num) + 1
+    except:
+        iter_num = 1
+
+    if (iter_num > 1):
+        name = slush.name[:-1] + str(iter_num)
+    else:
+        name = slush.name + " " + str(iter_num)
+    
+    dup_slush = Slush(name=name,
+                            description=slush.description,
+                            date=slush.date,
+                            start=slush.start,
+                            end=slush.end,
+                            fsp=slush.fsp,
+                            numPeople=slush.numPeople,
+                            sent=slush.sent)
+    
+    try:
+        # add slush job to the database
+        db.session.add(dup_slush)
+        db.session.commit()
+        flash('You have successfully duplicated the Slush job.')
+    except:
+        # in case slush job name already exists
+        flash('Error: this Slush Job already exists.')
+
+    # redirect to the slush job page
+    return redirect(url_for('admin.list_slush'))
+
+    return render_template('admin/slushs/slush.html', action="Duplicate",
+                           add_slush=add_slush,
                            title="Add Slush Job")
 
 @admin.route('/slush/edit/<int:id>', methods=['GET', 'POST'])
@@ -952,6 +1288,17 @@ def delete_role(id):
     return render_template(title="Delete Role")
 
 # Freshman Views
+
+@admin.route('/freshman', methods=['GET', 'POST'])
+def list_freshmans_nologin():
+    """
+    List all departments
+    """
+
+    freshmans = Freshman.query.all()
+
+    return render_template('admin/freshmans/freshmans-nologin.html',
+                           freshman=freshmans, title="Freshmans")
 
 @admin.route('/freshmans', methods=['GET', 'POST'])
 @login_required

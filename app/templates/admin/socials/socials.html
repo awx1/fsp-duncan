@@ -23,6 +23,7 @@
                     <th width="10%"; style="text-align:center"> End </th>
                     <th width="10%"; style="text-align:center"> FSP </th>
                     <th width="12%"; style="text-align:center"> # People </th>
+                    <th width="9%"; style="text-align:center"> Duplicate </th>
                     <th width="9%"; style="text-align:center"> Edit </th>
                     <th width="12%"; style="text-align:center"> Delete </th>
                   </tr>
@@ -37,6 +38,11 @@
                       <td> {{ social.end }} </td>
                       <td> {{ social.fsp }} </td>
                       <td> {{ social.numPeople }} </td>
+                      <td>
+                        <a href="{{ url_for('admin.duplicate_social', id=social.id) }}">
+                          <i class="fa fa-copy"></i> Duplicate
+                        </a>
+                      </td>
                       <td>
                         <a href="{{ url_for('admin.edit_social', id=social.id) }}">
                           <i class="fa fa-pencil"></i> Edit

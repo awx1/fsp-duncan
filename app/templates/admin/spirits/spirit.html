@@ -1,28 +1,36 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}
-    {% if add_spirit %}
+    {% if add_spirit == 1 %}
         Add Spirit Job
-    {% else %}
+    {% endif %}
+    {% if add_spirit == 2 %}
         Edit Spirit Job
+    {% endif %}
+    {% if add_spirit == 3 %}
+        Duplicate Spirit Job
     {% endif %}
 {% endblock %}
 {% block body %}
-<div class="content-section">
- <div class="outer">
-    <div class="middle">
-      <div class="inner">
-        <div class="center">
-            {% if add_spirit %}
-                <h1>Add Spirit Job</h1>
-            {% else %}
-                <h1>Edit Spirit Job</h1>
-            {% endif %}
-            <br/>
-            {{ wtf.quick_form(form) }}
+    <div class="content-section">
+        <div class="outer">
+            <div class="middle">
+                <div class="inner">
+                    <div class="center">
+                        {% if add_spirit == 1 %}
+                            <h1>Add Spirit Job<h1>
+                        {% endif %}
+                        {% if add_spirit == 2 %}
+                            <h1>Edit Spirit Job<h1>
+                        {% endif %}
+                        {% if add_spirit == 3 %}
+                            <h1>Duplicate Spirit Job<h1>
+                        {% endif %}
+                        <br/>
+                        {{ wtf.quick_form(form) }}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}

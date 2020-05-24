@@ -19,8 +19,6 @@
                     <th width="20%"; style="text-align:center"> Name </th>
                     <th width="27%"; style="text-align:center"> NetID </th>
                     <th width="27%"; style="text-align:center"> FSP </th>
-                    <th width="9%"; style="text-align:center"> Edit </th>
-                    <th width="12%"; style="text-align:center"> Delete </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -29,16 +27,6 @@
                       <td> {{ fresh.name }} </td>
                       <td> {{ fresh.netID }} </td>
                       <td> {{ fresh.fsp }} </td>
-                      <td>
-                        <a href="{{ url_for('admin.edit_freshman', id=fresh.id) }}">
-                          <i class="fa fa-pencil"></i> Edit
-                        </a>
-                      </td>
-                      <td>
-                        <a href="{{ url_for('admin.delete_freshman', id=fresh.id) }}">
-                          <i class="fa fa-trash"></i> Delete
-                        </a>
-                      </td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -50,10 +38,6 @@
                 <h3> No new students have been added. </h3>
                 <hr class="intro-divider">
               {% endif %}
-              <a href="{{ url_for('admin.add_freshman') }}" class="btn btn-default btn-lg">
-                <i class="fa fa-user-plus"></i>
-                Add New Student
-              </a>
             </div>
           </div>
         </div>

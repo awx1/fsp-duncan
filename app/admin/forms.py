@@ -16,7 +16,7 @@ class DepartmentForm(FlaskForm):
     date = DateField('Date: M/D/YYYY (ie. 9/16/2020)', format='%m/%d/%Y', validators=[DataRequired()])
     start_at = TimeField('Start at',validators=[DataRequired()])
     end_at = TimeField('End at', validators=[DataRequired()])
-    fsp = DecimalField('FSP: Please enter in decimal form (ie. 1 is 1.0)', validators=[DataRequired()])
+    fsp = DecimalField('FSP: Range (0.00 to 9.99)', validators=[DataRequired()])
     numPeople = IntegerField('# People', validators=[DataRequired()])
 
     submit = SubmitField('Submit')
