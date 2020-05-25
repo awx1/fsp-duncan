@@ -23,6 +23,7 @@
                     <th width="10%"; style="text-align:center"> End </th>
                     <th width="8%"; style="text-align:center"> FSP </th>
                     <th width="8%"; style="text-align:center"> # People </th>
+                    <th width="9%"; style="text-align:center"> Sent </th>
                     <th width="9%"; style="text-align:center"> Duplicate </th>
                     <th width="9%"; style="text-align:center"> Edit </th>
                     <th width="12%"; style="text-align:center"> Delete </th>
@@ -38,6 +39,7 @@
                       <td> {{ associate.end }} </td>
                       <td> {{ associate.fsp }} </td>
                       <td> {{ associate.numPeople }} </td>
+                      <td> {{ associate.sent }} </td>
                       <td>
                         <a href="{{ url_for('admin.duplicate_associate', id=associate.id) }}">
                           <i class="fa fa-copy"></i> Duplicate
@@ -65,8 +67,16 @@
                 <hr class="intro-divider">
               {% endif %}
               <a href="{{ url_for('admin.add_associate') }}" class="btn btn-default btn-lg">
-                <i class="fa fa-plus"></i>
+                <i class="fa fa-graduation-cap"></i>
                 Add Associates Job
+              </a>
+              <a href="{{ url_for('admin.points_associate') }}" class="btn btn-default btn-lg">
+                <i class="fa fa-gavel"></i>
+                Give Job Points
+              </a>
+              <a href="{{ url_for('admin.build_form_associates') }}" class="btn btn-default btn-lg">
+                <i class="fa fa-gavel"></i>
+                Email Jobs Outs
               </a>
             </div>
           </div>

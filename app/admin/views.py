@@ -6,7 +6,7 @@ from flask_login import current_user, login_required
 from . import admin
 from forms import DepartmentForm, AssociatesForm, BikeForm, CulArtForm, MerchForm, SpiritForm, SocialsForm, SlushForm, RoleForm, FreshmanForm
 from .. import db
-from ..models import Department, Associates, Bike, CulArt, Merch, Spirit, Socials, Slush, Employee, Freshman
+from ..models import Department, Associates, Bike, CulArt, Merch, Spirit, Socials, Slush, Employee, Freshman, Done
 
 
 def check_admin():
@@ -22,14 +22,14 @@ def check_admin():
 @login_required
 def list_departments():
     """
-    List all departments
+    List all departments jobs
     """
     check_admin()
 
-    departments = Department.query.all()
+    departments = Departments.query.all()
 
     return render_template('admin/departments/departments.html',
-                           departments=departments, title="Departments")
+                           departments=departments, title="Department")
 
 @admin.route('/departments/add', methods=['GET', 'POST'])
 @login_required
@@ -131,8 +131,131 @@ def list_associates():
 
     associates = Associates.query.all()
 
+    for job in associates:
+        if (job.employees != None):
+            db.session.delete(job)
+            db.session.commit()
+            freshmans = Freshman.query.all()
+    
+            employees = str(job.employees)
+            assigned_people = employees.split()
+            count = False
+            for person in assigned_people:
+                for freshman in freshmans:
+                    if freshman.netID == person:
+                        fin_job = Done(name=job.name,
+                                        description=job.description,
+                                        date=job.date,
+                                        start=job.start,
+                                        end=job.end,
+                                        fsp=job.fsp,
+                                        numPeople=job.numPeople,
+                                        student=freshman.name,
+                                        sid=freshman.id,
+                                        department="associates",
+                                        points_given=False)
+                        try:
+                            # add done job to the database
+                            db.session.add(fin_job)
+                            db.session.commit()
+                            if not count:
+                                flash('Some Associate Jobs have just been assigned: Please refresh page')
+                                count = True
+                            # flash('You have successfully added a new assigned Associates Job.')
+                        except:
+                            # in case done job name already exists
+                            flash('Error: this Associates Job already exists in Done.')
+
+
     return render_template('admin/associates/associates.html',
                            associates=associates, title="Associates Jobs")
+
+# @admin.route('/associates/form', methods=['GET', 'POST'])
+# @login_required
+# def build_form_associates():
+#     """
+#     List all associates jobs
+#     """
+#     check_admin()
+
+#     associates = Associates.query.all()
+
+#     for job in associates:
+#         if not job.sent:
+
+#     return render_template('admin/associates/associates.html',
+#                            associates=associates, title="Associates Jobs")
+
+@admin.route('/associates/points', methods=['GET', 'POST'])
+@login_required
+def points_associate():
+    """
+    List all associates jobs
+    """
+    check_admin()
+
+    jobs = Done.query.all()
+    fin_job = []
+    for job in jobs:
+        if (str(job.department) == 'associates') and not job.points_given:
+            fin_job.append(job)
+
+    return render_template('admin/associates/associates-points.html', done=fin_job,
+                            title="Associates Jobs: Assign Points")
+
+@admin.route('/associates/points/add/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def add_points_associate(id, points):
+    """
+    Add points for freshman for associates jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp += points
+    db.session.commit()
+    flash('You have successfully added FSPs for ' + freshman.name + '.')
+
+    # redirect to the associate job page
+    return redirect(url_for('admin.points_associate'))
+
+    return render_template(title="Associates Jobs: Added Points")
+
+@admin.route('/associates/points/remove/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def remove_points_associate(id, points):
+    """
+    Remove points for freshman for associates jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp -= points
+    db.session.commit()
+    flash('You have successfully removed FSPs for ' + freshman.name + '.')
+
+    # redirect to the associate job page
+    return redirect(url_for('admin.points_associate'))
+
+    return render_template(title="Associates Jobs: Removed Points")
+
+@admin.route('/associates/points/<int:id>', methods=['GET', 'POST'])
+@login_required
+def remove_fin_job_associate(id):
+    """
+    Remove finished job for associates jobs to store in Done db
+    """
+    check_admin()
+
+    job = Done.query.get_or_404(id)
+    job.points_given = True
+    db.session.commit()
+    flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
+
+    # redirect to the associate job page
+    return redirect(url_for('admin.points_associate'))
+
+    return render_template(title="Associates Jobs")
 
 @admin.route('/associates/add', methods=['GET', 'POST'])
 @login_required
@@ -163,10 +286,10 @@ def add_associate():
         except:
             # in case associates job name already exists
             flash('Error: this Associates Job already exists.')
-
+        
         # redirect to associates job page
         return redirect(url_for('admin.list_associates'))
-
+    
     # load associates template
     return render_template('admin/associates/associate.html', action="Add",
                            add_associate=add_associate, form=form,
@@ -1198,95 +1321,6 @@ def delete_slush(id):
 
     return render_template(title="Delete Slush Job")
 
-# Role Views
-
-@admin.route('/roles')
-@login_required
-def list_roles():
-    check_admin()
-    """
-    List all roles
-    """
-    roles = Role.query.all()
-    return render_template('admin/roles/roles.html',
-                           roles=roles, title='Roles')
-
-@admin.route('/roles/add', methods=['GET', 'POST'])
-@login_required
-def add_role():
-    """
-    Add a role to the database
-    """
-    check_admin()
-
-    add_role = True
-
-    form = RoleForm()
-    if form.validate_on_submit():
-        role = Role(name=form.name.data,
-                    description=form.description.data)
-
-        try:
-            # add role to the database
-            db.session.add(role)
-            db.session.commit()
-            flash('You have successfully added a new role.')
-        except:
-            # in case role name already exists
-            flash('Error: role name already exists.')
-
-        # redirect to the roles page
-        return redirect(url_for('admin.list_roles'))
-
-    # load role template
-    return render_template('admin/roles/role.html', add_role=add_role,
-                           form=form, title='Add Role')
-
-@admin.route('/roles/edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_role(id):
-    """
-    Edit a role
-    """
-    check_admin()
-
-    add_role = False
-
-    role = Role.query.get_or_404(id)
-    form = RoleForm(obj=role)
-    if form.validate_on_submit():
-        role.name = form.name.data
-        role.description = form.description.data
-        db.session.add(role)
-        db.session.commit()
-        flash('You have successfully edited the role.')
-
-        # redirect to the roles page
-        return redirect(url_for('admin.list_roles'))
-
-    form.description.data = role.description
-    form.name.data = role.name
-    return render_template('admin/roles/role.html', add_role=add_role,
-                           form=form, title="Edit Role")
-
-@admin.route('/roles/delete/<int:id>', methods=['GET', 'POST'])
-@login_required
-def delete_role(id):
-    """
-    Delete a role from the database
-    """
-    check_admin()
-
-    role = Role.query.get_or_404(id)
-    db.session.delete(role)
-    db.session.commit()
-    flash('You have successfully deleted the role.')
-
-    # redirect to the roles page
-    return redirect(url_for('admin.list_roles'))
-
-    return render_template(title="Delete Role")
-
 # Freshman Views
 
 @admin.route('/freshman', methods=['GET', 'POST'])
@@ -1434,4 +1468,91 @@ def list_employees():
 #                            employee=employee, form=form,
 #                            title='Assign Employee')
 
+# Role Views
 
+@admin.route('/roles')
+@login_required
+def list_roles():
+    check_admin()
+    """
+    List all roles
+    """
+    roles = Role.query.all()
+    return render_template('admin/roles/roles.html',
+                           roles=roles, title='Roles')
+
+@admin.route('/roles/add', methods=['GET', 'POST'])
+@login_required
+def add_role():
+    """
+    Add a role to the database
+    """
+    check_admin()
+
+    add_role = True
+
+    form = RoleForm()
+    if form.validate_on_submit():
+        role = Role(name=form.name.data,
+                    description=form.description.data)
+
+        try:
+            # add role to the database
+            db.session.add(role)
+            db.session.commit()
+            flash('You have successfully added a new role.')
+        except:
+            # in case role name already exists
+            flash('Error: role name already exists.')
+
+        # redirect to the roles page
+        return redirect(url_for('admin.list_roles'))
+
+    # load role template
+    return render_template('admin/roles/role.html', add_role=add_role,
+                           form=form, title='Add Role')
+
+@admin.route('/roles/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_role(id):
+    """
+    Edit a role
+    """
+    check_admin()
+
+    add_role = False
+
+    role = Role.query.get_or_404(id)
+    form = RoleForm(obj=role)
+    if form.validate_on_submit():
+        role.name = form.name.data
+        role.description = form.description.data
+        db.session.add(role)
+        db.session.commit()
+        flash('You have successfully edited the role.')
+
+        # redirect to the roles page
+        return redirect(url_for('admin.list_roles'))
+
+    form.description.data = role.description
+    form.name.data = role.name
+    return render_template('admin/roles/role.html', add_role=add_role,
+                           form=form, title="Edit Role")
+
+@admin.route('/roles/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_role(id):
+    """
+    Delete a role from the database
+    """
+    check_admin()
+
+    role = Role.query.get_or_404(id)
+    db.session.delete(role)
+    db.session.commit()
+    flash('You have successfully deleted the role.')
+
+    # redirect to the roles page
+    return redirect(url_for('admin.list_roles'))
+
+    return render_template(title="Delete Role")

@@ -248,15 +248,17 @@ class Done(db.Model):
     __tablename__ = 'done'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(60), unique=True)
+    name = db.Column(db.String(60))
     description = db.Column(db.String(200))
     date = db.Column(db.Date)
     start = db.Column(db.Time)
     end = db.Column(db.Time)
     fsp = db.Column(db.Numeric(3,2))
     numPeople = db.Column(db.Integer)
-    sent = db.Column(db.Boolean)
-    employees = db.Column(db.String(200))
+    student = db.Column(db.String(60))
+    sid = db.Column(db.String(60))
+    department = db.Column(db.String(60))
+    points_given = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<Done: {}>'.format(self.name)
