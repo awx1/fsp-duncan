@@ -166,7 +166,6 @@ def list_associates():
                             # in case done job name already exists
                             flash('Error: this Associates Job already exists in Done.')
 
-
     return render_template('admin/associates/associates.html',
                            associates=associates, title="Associates Jobs")
 
@@ -409,8 +408,114 @@ def list_bikes():
 
     bikes = Bike.query.all()
 
+    for job in bikes:
+        if (job.employees != None):
+            db.session.delete(job)
+            db.session.commit()
+            freshmans = Freshman.query.all()
+    
+            employees = str(job.employees)
+            assigned_people = employees.split()
+            count = False
+            for person in assigned_people:
+                for freshman in freshmans:
+                    if freshman.netID == person:
+                        fin_job = Done(name=job.name,
+                                        description=job.description,
+                                        date=job.date,
+                                        start=job.start,
+                                        end=job.end,
+                                        fsp=job.fsp,
+                                        numPeople=job.numPeople,
+                                        student=freshman.name,
+                                        sid=freshman.id,
+                                        department="bike",
+                                        points_given=False)
+                        try:
+                            # add done job to the database
+                            db.session.add(fin_job)
+                            db.session.commit()
+                            if not count:
+                                flash('Some Bike Jobs have just been assigned: Please refresh page')
+                                count = True
+                            # flash('You have successfully added a new assigned Bike Job.')
+                        except:
+                            # in case done job name already exists
+                            flash('Error: this Bike Job already exists in Done.')
+
     return render_template('admin/bikes/bikes.html',
                            bikes=bikes, title="Beer Bike Jobs")
+
+@admin.route('/bike/points', methods=['GET', 'POST'])
+@login_required
+def points_bike():
+    """
+    List all bike jobs
+    """
+    check_admin()
+
+    jobs = Done.query.all()
+    fin_job = []
+    for job in jobs:
+        if (str(job.department) == 'bike') and not job.points_given:
+            fin_job.append(job)
+
+    return render_template('admin/bikes/bikes-points.html', done=fin_job,
+                            title="Bike Jobs: Assign Points")
+
+@admin.route('/bike/points/add/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def add_points_bike(id, points):
+    """
+    Add points for freshman for bike jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp += points
+    db.session.commit()
+    flash('You have successfully added FSPs for ' + freshman.name + '.')
+
+    # redirect to the bike job page
+    return redirect(url_for('admin.points_bike'))
+
+    return render_template(title="Bike Jobs: Added Points")
+
+@admin.route('/bike/points/remove/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def remove_points_bike(id, points):
+    """
+    Remove points for freshman for bike jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp -= points
+    db.session.commit()
+    flash('You have successfully removed FSPs for ' + freshman.name + '.')
+
+    # redirect to the bike job page
+    return redirect(url_for('admin.points_bike'))
+
+    return render_template(title="Bike Jobs: Removed Points")
+
+@admin.route('/bike/points/<int:id>', methods=['GET', 'POST'])
+@login_required
+def remove_fin_job_bike(id):
+    """
+    Remove finished job for bike jobs to store in Done db
+    """
+    check_admin()
+
+    job = Done.query.get_or_404(id)
+    job.points_given = True
+    db.session.commit()
+    flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
+
+    # redirect to the bike job page
+    return redirect(url_for('admin.points_bike'))
+
+    return render_template(title="Bike Jobs")
 
 @admin.route('/bike/add', methods=['GET', 'POST'])
 @login_required
@@ -563,8 +668,114 @@ def list_cularts():
 
     cularts = CulArt.query.all()
 
+    for job in cularts:
+        if (job.employees != None):
+            db.session.delete(job)
+            db.session.commit()
+            freshmans = Freshman.query.all()
+    
+            employees = str(job.employees)
+            assigned_people = employees.split()
+            count = False
+            for person in assigned_people:
+                for freshman in freshmans:
+                    if freshman.netID == person:
+                        fin_job = Done(name=job.name,
+                                        description=job.description,
+                                        date=job.date,
+                                        start=job.start,
+                                        end=job.end,
+                                        fsp=job.fsp,
+                                        numPeople=job.numPeople,
+                                        student=freshman.name,
+                                        sid=freshman.id,
+                                        department="culart",
+                                        points_given=False)
+                        try:
+                            # add done job to the database
+                            db.session.add(fin_job)
+                            db.session.commit()
+                            if not count:
+                                flash('Some C & A Jobs have just been assigned: Please refresh page')
+                                count = True
+                            # flash('You have successfully added a new assigned C & A Job.')
+                        except:
+                            # in case done job name already exists
+                            flash('Error: this C & A Job already exists in Done.')
+
     return render_template('admin/cularts/cularts.html',
                            cularts=cularts, title="C & A Jobs")
+
+@admin.route('/culart/points', methods=['GET', 'POST'])
+@login_required
+def points_culart():
+    """
+    List all C & A jobs
+    """
+    check_admin()
+
+    jobs = Done.query.all()
+    fin_job = []
+    for job in jobs:
+        if (str(job.department) == 'culart') and not job.points_given:
+            fin_job.append(job)
+
+    return render_template('admin/cularts/cularts-points.html', done=fin_job,
+                            title="C & A Jobs: Assign Points")
+
+@admin.route('/culart/points/add/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def add_points_culart(id, points):
+    """
+    Add points for freshman for C & A jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp += points
+    db.session.commit()
+    flash('You have successfully added FSPs for ' + freshman.name + '.')
+
+    # redirect to the C & A job page
+    return redirect(url_for('admin.points_culart'))
+
+    return render_template(title="C & A Jobs: Added Points")
+
+@admin.route('/culart/points/remove/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def remove_points_culart(id, points):
+    """
+    Remove points for freshman for C & A jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp -= points
+    db.session.commit()
+    flash('You have successfully removed FSPs for ' + freshman.name + '.')
+
+    # redirect to the C & A job page
+    return redirect(url_for('admin.points_culart'))
+
+    return render_template(title="C & A Jobs: Removed Points")
+
+@admin.route('/culart/points/<int:id>', methods=['GET', 'POST'])
+@login_required
+def remove_fin_job_culart(id):
+    """
+    Remove finished job for C & A jobs to store in Done db
+    """
+    check_admin()
+
+    job = Done.query.get_or_404(id)
+    job.points_given = True
+    db.session.commit()
+    flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
+
+    # redirect to the C & A job page
+    return redirect(url_for('admin.points_bike'))
+
+    return render_template(title="C & A Jobs")
 
 @admin.route('/culart/add', methods=['GET', 'POST'])
 @login_required
@@ -717,8 +928,114 @@ def list_merch():
 
     merchs = Merch.query.all()
 
+    for job in merchs:
+        if (job.employees != None):
+            db.session.delete(job)
+            db.session.commit()
+            freshmans = Freshman.query.all()
+    
+            employees = str(job.employees)
+            assigned_people = employees.split()
+            count = False
+            for person in assigned_people:
+                for freshman in freshmans:
+                    if freshman.netID == person:
+                        fin_job = Done(name=job.name,
+                                        description=job.description,
+                                        date=job.date,
+                                        start=job.start,
+                                        end=job.end,
+                                        fsp=job.fsp,
+                                        numPeople=job.numPeople,
+                                        student=freshman.name,
+                                        sid=freshman.id,
+                                        department="merch",
+                                        points_given=False)
+                        try:
+                            # add done job to the database
+                            db.session.add(fin_job)
+                            db.session.commit()
+                            if not count:
+                                flash('Some Merch Jobs have just been assigned: Please refresh page')
+                                count = True
+                            # flash('You have successfully added a new assigned Merch Job.')
+                        except:
+                            # in case done job name already exists
+                            flash('Error: this Merch Job already exists in Done.')
+
     return render_template('admin/merchs/merchs.html',
                            merchs=merchs, title="Merch Jobs")
+
+@admin.route('/merch/points', methods=['GET', 'POST'])
+@login_required
+def points_merch():
+    """
+    List all merch jobs
+    """
+    check_admin()
+
+    jobs = Done.query.all()
+    fin_job = []
+    for job in jobs:
+        if (str(job.department) == 'merch') and not job.points_given:
+            fin_job.append(job)
+
+    return render_template('admin/merchs/merchs-points.html', done=fin_job,
+                            title="Merch Jobs: Assign Points")
+
+@admin.route('/merch/points/add/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def add_points_merch(id, points):
+    """
+    Add points for freshman for merch jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp += points
+    db.session.commit()
+    flash('You have successfully added FSPs for ' + freshman.name + '.')
+
+    # redirect to the bike job page
+    return redirect(url_for('admin.points_merch'))
+
+    return render_template(title="Merch Jobs: Added Points")
+
+@admin.route('/merch/points/remove/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def remove_points_merch(id, points):
+    """
+    Remove points for freshman for merch jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp -= points
+    db.session.commit()
+    flash('You have successfully removed FSPs for ' + freshman.name + '.')
+
+    # redirect to the merch job page
+    return redirect(url_for('admin.points_merch'))
+
+    return render_template(title="Merch Jobs: Removed Points")
+
+@admin.route('/merch/points/<int:id>', methods=['GET', 'POST'])
+@login_required
+def remove_fin_job_merch(id):
+    """
+    Remove finished job for merch jobs to store in Done db
+    """
+    check_admin()
+
+    job = Done.query.get_or_404(id)
+    job.points_given = True
+    db.session.commit()
+    flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
+
+    # redirect to the merch job page
+    return redirect(url_for('admin.points_merch'))
+
+    return render_template(title="Merch Jobs")
 
 @admin.route('/merch/add', methods=['GET', 'POST'])
 @login_required
@@ -871,8 +1188,114 @@ def list_spirit():
 
     spirits = Spirit.query.all()
 
+    for job in spirits:
+        if (job.employees != None):
+            db.session.delete(job)
+            db.session.commit()
+            freshmans = Freshman.query.all()
+    
+            employees = str(job.employees)
+            assigned_people = employees.split()
+            count = False
+            for person in assigned_people:
+                for freshman in freshmans:
+                    if freshman.netID == person:
+                        fin_job = Done(name=job.name,
+                                        description=job.description,
+                                        date=job.date,
+                                        start=job.start,
+                                        end=job.end,
+                                        fsp=job.fsp,
+                                        numPeople=job.numPeople,
+                                        student=freshman.name,
+                                        sid=freshman.id,
+                                        department="spirit",
+                                        points_given=False)
+                        try:
+                            # add done job to the database
+                            db.session.add(fin_job)
+                            db.session.commit()
+                            if not count:
+                                flash('Some Spirit Jobs have just been assigned: Please refresh page')
+                                count = True
+                            # flash('You have successfully added a new assigned Spirit Job.')
+                        except:
+                            # in case done job name already exists
+                            flash('Error: this Spirit Job already exists in Done.')
+
     return render_template('admin/spirits/spirits.html',
                            spirits=spirits, title="Spirit Jobs")
+
+@admin.route('/spirit/points', methods=['GET', 'POST'])
+@login_required
+def points_spirit():
+    """
+    List all spirit jobs
+    """
+    check_admin()
+
+    jobs = Done.query.all()
+    fin_job = []
+    for job in jobs:
+        if (str(job.department) == 'spirit') and not job.points_given:
+            fin_job.append(job)
+
+    return render_template('admin/spirits/spirits-points.html', done=fin_job,
+                            title="Spirit Jobs: Assign Points")
+
+@admin.route('/spirit/points/add/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def add_points_spirit(id, points):
+    """
+    Add points for freshman for spirit jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp += points
+    db.session.commit()
+    flash('You have successfully added FSPs for ' + freshman.name + '.')
+
+    # redirect to the spirit job page
+    return redirect(url_for('admin.points_spirit'))
+
+    return render_template(title="Spirit Jobs: Added Points")
+
+@admin.route('/spirit/points/remove/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def remove_points_spirit(id, points):
+    """
+    Remove points for freshman for spirit jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp -= points
+    db.session.commit()
+    flash('You have successfully removed FSPs for ' + freshman.name + '.')
+
+    # redirect to the spirit job page
+    return redirect(url_for('admin.points_spirit'))
+
+    return render_template(title="Spirit Jobs: Removed Points")
+
+@admin.route('/spirit/points/<int:id>', methods=['GET', 'POST'])
+@login_required
+def remove_fin_job_spirit(id):
+    """
+    Remove finished job for spirit jobs to store in Done db
+    """
+    check_admin()
+
+    job = Done.query.get_or_404(id)
+    job.points_given = True
+    db.session.commit()
+    flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
+
+    # redirect to the spirit job page
+    return redirect(url_for('admin.points_spirit'))
+
+    return render_template(title="Spirit Jobs")
 
 @admin.route('/spirit/add', methods=['GET', 'POST'])
 @login_required
@@ -1025,8 +1448,114 @@ def list_socials():
 
     socials = Socials.query.all()
 
+    for job in socials:
+        if (job.employees != None):
+            db.session.delete(job)
+            db.session.commit()
+            freshmans = Freshman.query.all()
+    
+            employees = str(job.employees)
+            assigned_people = employees.split()
+            count = False
+            for person in assigned_people:
+                for freshman in freshmans:
+                    if freshman.netID == person:
+                        fin_job = Done(name=job.name,
+                                        description=job.description,
+                                        date=job.date,
+                                        start=job.start,
+                                        end=job.end,
+                                        fsp=job.fsp,
+                                        numPeople=job.numPeople,
+                                        student=freshman.name,
+                                        sid=freshman.id,
+                                        department="socials",
+                                        points_given=False)
+                        try:
+                            # add done job to the database
+                            db.session.add(fin_job)
+                            db.session.commit()
+                            if not count:
+                                flash('Some Socials Jobs have just been assigned: Please refresh page')
+                                count = True
+                            # flash('You have successfully added a new assigned Socials Job.')
+                        except:
+                            # in case done job name already exists
+                            flash('Error: this Socials Job already exists in Done.')
+
     return render_template('admin/socials/socials.html',
                            socials=socials, title="Socials Jobs")
+
+@admin.route('/socials/points', methods=['GET', 'POST'])
+@login_required
+def points_social():
+    """
+    List all socials jobs
+    """
+    check_admin()
+
+    jobs = Done.query.all()
+    fin_job = []
+    for job in jobs:
+        if (str(job.department) == 'socials') and not job.points_given:
+            fin_job.append(job)
+
+    return render_template('admin/socials/socials-points.html', done=fin_job,
+                            title="Socials Jobs: Assign Points")
+
+@admin.route('/socials/points/add/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def add_points_social(id, points):
+    """
+    Add points for freshman for socials jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp += points
+    db.session.commit()
+    flash('You have successfully added FSPs for ' + freshman.name + '.')
+
+    # redirect to the socials job page
+    return redirect(url_for('admin.points_social'))
+
+    return render_template(title="Socials Jobs: Added Points")
+
+@admin.route('/socials/points/remove/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def remove_points_social(id, points):
+    """
+    Remove points for freshman for socials jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp -= points
+    db.session.commit()
+    flash('You have successfully removed FSPs for ' + freshman.name + '.')
+
+    # redirect to the socials job page
+    return redirect(url_for('admin.points_social'))
+
+    return render_template(title="Socials Jobs: Removed Points")
+
+@admin.route('/socials/points/<int:id>', methods=['GET', 'POST'])
+@login_required
+def remove_fin_job_social(id):
+    """
+    Remove finished job for socials jobs to store in Done db
+    """
+    check_admin()
+
+    job = Done.query.get_or_404(id)
+    job.points_given = True
+    db.session.commit()
+    flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
+
+    # redirect to the social job page
+    return redirect(url_for('admin.points_social'))
+
+    return render_template(title="Socials Jobs")
 
 @admin.route('/socials/add', methods=['GET', 'POST'])
 @login_required
@@ -1179,8 +1708,114 @@ def list_slush():
 
     slushs = Slush.query.all()
 
+    for job in slushs:
+        if (job.employees != None):
+            db.session.delete(job)
+            db.session.commit()
+            freshmans = Freshman.query.all()
+    
+            employees = str(job.employees)
+            assigned_people = employees.split()
+            count = False
+            for person in assigned_people:
+                for freshman in freshmans:
+                    if freshman.netID == person:
+                        fin_job = Done(name=job.name,
+                                        description=job.description,
+                                        date=job.date,
+                                        start=job.start,
+                                        end=job.end,
+                                        fsp=job.fsp,
+                                        numPeople=job.numPeople,
+                                        student=freshman.name,
+                                        sid=freshman.id,
+                                        department="slush",
+                                        points_given=False)
+                        try:
+                            # add done job to the database
+                            db.session.add(fin_job)
+                            db.session.commit()
+                            if not count:
+                                flash('Some Slush Jobs have just been assigned: Please refresh page')
+                                count = True
+                            # flash('You have successfully added a new assigned Slush Job.')
+                        except:
+                            # in case done job name already exists
+                            flash('Error: this Slush Job already exists in Done.')
+
     return render_template('admin/slushs/slushs.html',
                            slushs=slushs, title="Slush Jobs")
+
+@admin.route('/slush/points', methods=['GET', 'POST'])
+@login_required
+def points_slush():
+    """
+    List all slush jobs
+    """
+    check_admin()
+
+    jobs = Done.query.all()
+    fin_job = []
+    for job in jobs:
+        if (str(job.department) == 'slush') and not job.points_given:
+            fin_job.append(job)
+
+    return render_template('admin/slushs/slushs-points.html', done=fin_job,
+                            title="Slush Jobs: Assign Points")
+
+@admin.route('/slush/points/add/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def add_points_slush(id, points):
+    """
+    Add points for freshman for slush jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp += points
+    db.session.commit()
+    flash('You have successfully added FSPs for ' + freshman.name + '.')
+
+    # redirect to the slush job page
+    return redirect(url_for('admin.points_slush'))
+
+    return render_template(title="Slush Jobs: Added Points")
+
+@admin.route('/slush/points/remove/<int:id>/<int:points>', methods=['GET', 'POST'])
+@login_required
+def remove_points_slush(id, points):
+    """
+    Remove points for freshman for slush jobs
+    """
+    check_admin()
+
+    freshman = Freshman.query.get_or_404(id)
+    freshman.fsp -= points
+    db.session.commit()
+    flash('You have successfully removed FSPs for ' + freshman.name + '.')
+
+    # redirect to the slush job page
+    return redirect(url_for('admin.points_slush'))
+
+    return render_template(title="Slush Jobs: Removed Points")
+
+@admin.route('/slush/points/<int:id>', methods=['GET', 'POST'])
+@login_required
+def remove_fin_job_slush(id):
+    """
+    Remove finished job for slush jobs to store in Done db
+    """
+    check_admin()
+
+    job = Done.query.get_or_404(id)
+    job.points_given = True
+    db.session.commit()
+    flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
+
+    # redirect to the slush job page
+    return redirect(url_for('admin.points_slush'))
+
+    return render_template(title="Slush Jobs")
 
 @admin.route('/slush/add', methods=['GET', 'POST'])
 @login_required
