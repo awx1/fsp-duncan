@@ -1853,7 +1853,7 @@ def list_slush():
     return render_template('admin/slushs/slushs.html',
                            slushs=slushs, title="Slush Jobs")
 
-@admin.route('/slush/form', methods=['GET', 'POST'])
+@admin.route('/slush/form/', methods=['GET', 'POST'])
 @login_required
 def list_sentout_but_not_assigned_slush():
     """
