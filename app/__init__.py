@@ -18,7 +18,7 @@ def create_app(config_name):
         app = Flask(__name__)
         app.config.update(
             SECRET_KEY=os.getenv('p9Bv<3Eid9%$i01'),
-            SQLALCHEMY_DATABASE_URI=os.getenv('mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-services.com/duncanfsp$dreamteam_db')
+            SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI')
         )
     else:
         app = Flask(__name__, instance_relative_config=True)
