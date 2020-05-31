@@ -31,3 +31,57 @@
   if field.data == time(hour=0, minute=0, second=0):
     message = self.message
   Need to handle 12:00:00 AM case
+
+  1  git clone https://github.com/awx1/fsp-duncan.git
+    2  ls
+    3  mkvirtualenv dream-team
+    4  cd fsp-duncan/
+    5  pip install -r requirements.txt
+    6  export FLASK_CONFIG=production
+    7  export FLASK_APP=run.py
+    8  export SQLALCHEMY_DATABASE_URI='mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-service.com/duncanfsp$dreamteam-db'
+    9  flask db upgrade
+   10  git pull origin master
+   11  flask db upgrade
+   12  git pull origin master
+   13  pip install -r requirements.txt
+   14  flask db upgrade
+   15  git pull origin master
+   16  flask db upgrade
+   17  git pull origin master
+   18  flask db upgrade
+   19  python --v
+   20  python -v
+   21  flask db upgrade
+   22  export SQLALCHEMY_DATABASE_URI='mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-service.com/duncanfsp$dreamteam-db'
+   23  flask db upgrade
+   24  export SQLALCHEMY_DATABASE_URI='mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-service.com/duncanfsp$dreamteam_db'
+   25  git pull origin master
+   26  flask db upgrade
+   27  export FLASK_CONFIG=production
+   28  export FLASK_APP=run.py
+   29  export SQLALCHEMY_DATABASE_URI='mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-service.com/duncanfsp$dreamteam_db'
+   30  flask db upgrade
+   31  flask db migrate
+   32  export SQLALCHEMY_DATABASE_URI='mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-service.com/duncanfsp$dreamteam_db'
+   33  export SQLALCHEMY_DATABASE_URI='mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-services.com/duncanfsp$dreamteam_db'
+   34  flask db migrate
+   35  flask db upgrade
+   36  git pull origin master
+   37  flask db upgrade
+   38  env
+   39  export SQLALCHEMY_DATABASE_URI='mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-services.com/duncanfsp$dreamteam_db'
+   40  flask db upgrade
+   41  git pull origin master
+   42  export SQLALCHEMY_DATABASE_URI='mysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-services.com/duncanfsp$dreamteam_db'
+   43  flask db upgrade
+   44  pip install mysqldb
+   45  'pip install pymysql
+
+   46  pip install pymysql
+   47  flask db upgrade
+   48  export SQLALCHEMY_DATABASE_URI='return __import__('MySQLdb')://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-services.com/duncanfsp$dreamteam_db'
+   49  ImportError: No module named MySQLd
+   50  export SQLALCHEMY_DATABASE_URI='mysql+pymysql://duncanfsp:duncancollege@duncanfsp.mysql.pythonanywhere-services.com/duncanfsp$dreamteam_db'
+   51  flask db upgrade
+   52  history
