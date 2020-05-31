@@ -169,21 +169,43 @@ def list_associates():
     return render_template('admin/associates/associates.html',
                            associates=associates, title="Associates Jobs")
 
-# @admin.route('/associates/form', methods=['GET', 'POST'])
-# @login_required
-# def build_form_associates():
-#     """
-#     List all associates jobs
-#     """
-#     check_admin()
+@admin.route('/associates/sentout', methods=['GET', 'POST'])
+@login_required
+def list_sentout_but_not_assigned_associate():
+    """
+    List all associates jobs
+    """
+    check_admin()
 
-#     associates = Associates.query.all()
+    associates = Associates.query.all()
+    sent_but_not_assigned = []
+    for job in associates:
+        if not (job.sent or str(job.employees)):
+            sent_but_not_assigned.append(job)
 
-#     for job in associates:
-#         if not job.sent:
+    return render_template('admin/associates/associates-sentout.html',
+                           done=sent_but_not_assigned, title="Associates Jobs")
 
-#     return render_template('admin/associates/associates.html',
-#                            associates=associates, title="Associates Jobs")
+@admin.route('/associates/form/1', methods=['GET', 'POST'])
+@login_required
+def build_form_associate():
+    """
+    List all associates jobs
+    """
+    # check_admin()
+
+    # associates = Associates.query.all()
+    # not_sent = []
+    # for job in associates:
+    #     if not job.sent:
+    #         sent_but_not_assigned.append(job)
+
+    # form = AssociatesForm()
+
+    # redirect to the associate job page
+    return redirect(url_for('admin.list_associates'))
+
+    return render_template(title="Associates Jobs: Form for Jobs Points")
 
 @admin.route('/associates/points', methods=['GET', 'POST'])
 @login_required
@@ -446,6 +468,23 @@ def list_bikes():
     return render_template('admin/bikes/bikes.html',
                            bikes=bikes, title="Beer Bike Jobs")
 
+@admin.route('/bike/form', methods=['GET', 'POST'])
+@login_required
+def list_sentout_but_not_assigned_bike():
+    """
+    List all bike jobs
+    """
+    check_admin()
+
+    associates = Bike.query.all()
+    sent_but_not_assigned = []
+    for job in associates:
+        if not (job.sent or str(job.employees)):
+            sent_but_not_assigned.append(job)
+
+    return render_template('admin/bikes/bikes-sentout.html',
+                           done=sent_but_not_assigned, title="Bike Jobs")
+
 @admin.route('/bike/points', methods=['GET', 'POST'])
 @login_required
 def points_bike():
@@ -705,6 +744,23 @@ def list_cularts():
 
     return render_template('admin/cularts/cularts.html',
                            cularts=cularts, title="C & A Jobs")
+
+@admin.route('/culart/form', methods=['GET', 'POST'])
+@login_required
+def list_sentout_but_not_assigned_culart():
+    """
+    List all C & A jobs
+    """
+    check_admin()
+
+    associates = CulArt.query.all()
+    sent_but_not_assigned = []
+    for job in associates:
+        if not (job.sent or str(job.employees)):
+            sent_but_not_assigned.append(job)
+
+    return render_template('admin/cularts/cularts-sentout.html',
+                           done=sent_but_not_assigned, title="C & A Jobs")
 
 @admin.route('/culart/points', methods=['GET', 'POST'])
 @login_required
@@ -966,6 +1022,23 @@ def list_merch():
     return render_template('admin/merchs/merchs.html',
                            merchs=merchs, title="Merch Jobs")
 
+@admin.route('/merch/form', methods=['GET', 'POST'])
+@login_required
+def list_sentout_but_not_assigned_merch():
+    """
+    List all merch jobs
+    """
+    check_admin()
+
+    associates = Merch.query.all()
+    sent_but_not_assigned = []
+    for job in associates:
+        if not (job.sent or str(job.employees)):
+            sent_but_not_assigned.append(job)
+
+    return render_template('admin/merchs/merchs-sentout.html',
+                           done=sent_but_not_assigned, title="Merch Jobs")
+
 @admin.route('/merch/points', methods=['GET', 'POST'])
 @login_required
 def points_merch():
@@ -1225,6 +1298,23 @@ def list_spirit():
 
     return render_template('admin/spirits/spirits.html',
                            spirits=spirits, title="Spirit Jobs")
+
+@admin.route('/spirit/form', methods=['GET', 'POST'])
+@login_required
+def list_sentout_but_not_assigned_spirit():
+    """
+    List all spirit jobs
+    """
+    check_admin()
+
+    associates = Spirit.query.all()
+    sent_but_not_assigned = []
+    for job in associates:
+        if not (job.sent or str(job.employees)):
+            sent_but_not_assigned.append(job)
+
+    return render_template('admin/spirits/spirits-sentout.html',
+                           done=sent_but_not_assigned, title="Spirit Jobs")
 
 @admin.route('/spirit/points', methods=['GET', 'POST'])
 @login_required
@@ -1486,6 +1576,23 @@ def list_socials():
     return render_template('admin/socials/socials.html',
                            socials=socials, title="Socials Jobs")
 
+@admin.route('/socials/form', methods=['GET', 'POST'])
+@login_required
+def list_sentout_but_not_assigned_social():
+    """
+    List all associates jobs
+    """
+    check_admin()
+
+    associates = Socials.query.all()
+    sent_but_not_assigned = []
+    for job in associates:
+        if not (job.sent or str(job.employees)):
+            sent_but_not_assigned.append(job)
+
+    return render_template('admin/socials/socials-sentout.html',
+                           done=sent_but_not_assigned, title="Socials Jobs")
+
 @admin.route('/socials/points', methods=['GET', 'POST'])
 @login_required
 def points_social():
@@ -1745,6 +1852,23 @@ def list_slush():
 
     return render_template('admin/slushs/slushs.html',
                            slushs=slushs, title="Slush Jobs")
+
+@admin.route('/slush/form', methods=['GET', 'POST'])
+@login_required
+def list_sentout_but_not_assigned_slush():
+    """
+    List all slush jobs
+    """
+    check_admin()
+
+    associates = Slush.query.all()
+    sent_but_not_assigned = []
+    for job in associates:
+        if not (job.sent or str(job.employees)):
+            sent_but_not_assigned.append(job)
+
+    return render_template('admin/slushs/slushs-sentout.html',
+                           done=sent_but_not_assigned, title="Slush Jobs")
 
 @admin.route('/slush/points', methods=['GET', 'POST'])
 @login_required

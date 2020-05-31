@@ -1,6 +1,6 @@
 {% import "bootstrap/utils.html" as utils %}
 {% extends "base.html" %}
-{% block title %}Socials{% endblock %}
+{% block title %}Beer Bike{% endblock %}
 {% block body %}
   <div class="content-section">
     <div class="outer">
@@ -9,7 +9,7 @@
           <br/>
           {{ utils.flashed_messages() }}
           <br/>
-          <h1 style="text-align:center;">Socials FSP Jobs</h1>
+          <h1 style="text-align:center;">Beer Bike FSP Jobs: Emailed out but not assigned</h1>
           {% if done %}
             <hr class="intro-divider">
             <div class="center">
@@ -22,9 +22,6 @@
                     <th width="10%"; style="text-align:center"> End </th>
                     <th width="8%"; style="text-align:center"> FSP </th>
                     <th width="8%"; style="text-align:center"> Student </th>
-                    <th width="9%"; style="text-align:center"> Give Points </th>
-                    <th width="9%"; style="text-align:center"> No Points </th>
-                    <th width="9%"; style="text-align:center"> Job Done </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -36,35 +33,20 @@
                       <td> {{ job.end }} </td>
                       <td> {{ job.fsp }} </td>
                       <td> {{ job.student }} </td>
-                      <td>
-                        <a href="{{ url_for('admin.add_points_social', id=job.sid, points=job.fsp ) }}">
-                          <i class="fa fa-check"></i> Yay!
-                        </a>
-                      </td>
-                      <td>
-                        <a href="{{ url_for('admin.remove_points_social', id=job.sid, points=job.fsp) }}">
-                          <i class="fa fa-times"></i> Aww!
-                        </a>
-                      </td>
-                      <td>
-                        <a href="{{ url_for('admin.remove_fin_job_social', id=job.id) }}">
-                          <i class="material-icons">done_all</i> Done!
-                        </a>
-                      </td>
                       <tr>
                       {% endfor %}
-                </tbody>
-              </table>
-            </div>
-            <div style="text-align: center">
-            {% else %}
-              <div style="text-align: center">
-                <h3> No Socials Jobs have been assigned. </h3>
-                <hr class="intro-divider">
-              {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <div style="text-align: center">
+                {% else %}
+                  <div style="text-align: center">
+                    <h3> No Beer Bike Jobs have been sent out but not assigned. </h3>
+                    <hr class="intro-divider">
+                  {% endif %}
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  {% endblock %}
+      {% endblock %}
