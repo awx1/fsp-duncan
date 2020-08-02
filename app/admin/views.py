@@ -7,6 +7,8 @@ from . import admin
 from forms import DepartmentForm, AssociatesForm, BikeForm, CulArtForm, MerchForm, SpiritForm, SocialsForm, SlushForm, RoleForm, FreshmanForm
 from .. import db
 from ..models import Department, Associates, Bike, CulArt, Merch, Spirit, Socials, Slush, Employee, Freshman, Done
+from sqlalchemy.exc import SQLAlchemyError
+import MySQLdb
 
 
 def check_admin():
@@ -130,19 +132,26 @@ def list_associates():
     check_admin()
 
     associates = Associates.query.all()
-
+    new_associates = []
     for job in associates:
+        #### Case where employees have been assigned to a Job ###
         if (job.employees != None):
+            ### Delete the job from the Associates FSP Jobs
             db.session.delete(job)
             db.session.commit()
+
+            ### Query all Freshman db entries
             freshmans = Freshman.query.all()
-    
+            ### Obtain the employees for the current Associates Job
             employees = str(job.employees)
             assigned_people = employees.split()
+
             count = False
+            ### Iterate through the assigned people
             for person in assigned_people:
                 for freshman in freshmans:
                     if freshman.netID == person:
+                        ### Create "finished assigning" job to the Done db
                         fin_job = Done(name=job.name,
                                         description=job.description,
                                         date=job.date,
@@ -155,37 +164,50 @@ def list_associates():
                                         department="associates",
                                         points_given=False)
                         try:
-                            # add done job to the database
+                            # Add that the job to the Done db
                             db.session.add(fin_job)
                             db.session.commit()
+                            # Some handling to make sure the message below only
+                            # shows once if there are multiple jobs being re-assigned
                             if not count:
-                                flash('Some Associate Jobs have just been assigned: Please refresh page')
+                                flash('Some Associate Jobs have just been assigned')
                                 count = True
-                            # flash('You have successfully added a new assigned Associates Job.')
                         except:
-                            # in case done job name already exists
+                            # In case the job name already exists
                             flash('Error: this Associates Job already exists in Done.')
+        ### De-display job from main if the job has been sent out
+        elif job.sent == True:
+            pass
+        ### Only display the job if it has not been sent out and there are no students assigned
+        else:
+            new_associates.append(job)
 
+    ### Rendering of HTML
     return render_template('admin/associates/associates.html',
-                           associates=associates, title="Associates Jobs")
+                           associates=new_associates, title="Associates Jobs")
 
 @admin.route('/associates/sentout', methods=['GET', 'POST'])
 @login_required
 def list_sentout_but_not_assigned_associate():
     """
-    List all associates jobs
+    List all associates jobs that have been sentout but not assigned
+    Should de-display the jobs that have "sentout" col == True from "associates"
+        and display the job at "associates/sentout" 
     """
     check_admin()
 
+    ### Queries all Associates Jobs
     associates = Associates.query.all()
     sent_but_not_assigned = []
     for job in associates:
-        if not (job.sent or str(job.employees)):
+        ### If the job has been sent out or there are no employees assigned
+        if job.sent and (job.employees == None):
             sent_but_not_assigned.append(job)
-
+    ### Displays the Jobs for sentout but not assigned
     return render_template('admin/associates/associates-sentout.html',
                            done=sent_but_not_assigned, title="Associates Jobs")
 
+#### Ignore this function for now
 @admin.route('/associates/form/1', methods=['GET', 'POST'])
 @login_required
 def build_form_associate():
@@ -211,13 +233,16 @@ def build_form_associate():
 @login_required
 def points_associate():
     """
-    List all associates jobs
+    Only displays jobs that are associates jobs and if point have not been assigned
     """
     check_admin()
 
+    ### Queries all the jobs in the Done db
     jobs = Done.query.all()
     fin_job = []
     for job in jobs:
+        ### Only displays jobs that are associates jobs
+        ###     and if point have not been assigned
         if (str(job.department) == 'associates') and not job.points_given:
             fin_job.append(job)
 
@@ -228,11 +253,13 @@ def points_associate():
 @login_required
 def add_points_associate(id, points):
     """
-    Add points for freshman for associates jobs
+    Add points functionality for freshman for Associates jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Assigns points
     freshman.fsp += points
     db.session.commit()
     flash('You have successfully added FSPs for ' + freshman.name + '.')
@@ -246,11 +273,13 @@ def add_points_associate(id, points):
 @login_required
 def remove_points_associate(id, points):
     """
-    Remove points for freshman for associates jobs
+    Remove points functionality for freshman for associates jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Removes points
     freshman.fsp -= points
     db.session.commit()
     flash('You have successfully removed FSPs for ' + freshman.name + '.')
@@ -268,7 +297,9 @@ def remove_fin_job_associate(id):
     """
     check_admin()
 
+    ### Queries the job from Done db
     job = Done.query.get_or_404(id)
+    # Sets that points have been assigned
     job.points_given = True
     db.session.commit()
     flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
@@ -285,11 +316,13 @@ def add_associate():
     Add a associates job to the database
     """
     check_admin()
-
+    ### Specifies adding job in associate.html
     add_associate = 1
 
+    ### Calls an Associates Form
     form = AssociatesForm()
     if form.validate_on_submit():
+        ### Assigns data from form
         associate = Associates(name=form.name.data,
                                 description=form.description.data,
                                 date=form.date.data,
@@ -300,7 +333,7 @@ def add_associate():
                                 sent=False)
 
         try:
-            # add associates job to the database
+            # Add the associates job to the database
             db.session.add(associate)
             db.session.commit()
             flash('You have successfully added a new Associates Job.')
@@ -308,10 +341,10 @@ def add_associate():
             # in case associates job name already exists
             flash('Error: this Associates Job already exists.')
         
-        # redirect to associates job page
+        # redirect to associates job page once done
         return redirect(url_for('admin.list_associates'))
     
-    # load associates template
+    # load associates main page
     return render_template('admin/associates/associate.html', action="Add",
                            add_associate=add_associate, form=form,
                            title="Add Associates Job")
@@ -324,21 +357,27 @@ def duplicate_associate(id):
     """
     check_admin()
 
+    ### Specifies duplicating job in associate.html
     add_associate = 3
-
+    ### Queries the associates job to duplicate
     associate = Associates.query.get_or_404(id)
 
+    ### Check to see if duplication has occurred before
     iter_num = associate.name[-1]
     try:
+        # Successfully adds 1 to count
         iter_num = int(iter_num) + 1
     except:
+        # Count should start at 1
         iter_num = 1
-
+    ### Updates the Job name
     if (iter_num > 1):
+        # Only changes the number
         name = associate.name[:-1] + str(iter_num)
     else:
+        # Adds a number to the end
         name = associate.name + " " + str(iter_num)
-    
+    ### Builds the duplicate associates job
     dup_associate = Associates(name=name,
                             description=associate.description,
                             date=associate.date,
@@ -349,7 +388,7 @@ def duplicate_associate(id):
                             sent=associate.sent)
     
     try:
-        # add associates job to the database
+        # Adds duplciate associates job to the database
         db.session.add(dup_associate)
         db.session.commit()
         flash('You have successfully duplicated the Associates job.')
@@ -368,13 +407,15 @@ def duplicate_associate(id):
 @login_required
 def edit_associate(id):
     """
-    Edit a associates job
+    Edit an associates job
     """
     check_admin()
 
+    ### Specifies editting job in associate.html
     add_associate = 2
-
+    ### Queries the associates job to edit
     associate = Associates.query.get_or_404(id)
+    ### Calls an Associates Form
     form = AssociatesForm(obj=associate)
     if form.validate_on_submit():
         associate.name = form.name.data
@@ -384,18 +425,19 @@ def edit_associate(id):
         associate.end = form.end_at.data
         associate.fsp = form.fsp.data
         associate.numPeople = form.numPeople.data
-        db.session.commit()
-        flash('You have successfully edited the Associates Job.')
+        try:
+            db.session.commit()
+            # redirect to the associates job page
+            return redirect(url_for('admin.list_associates'))
 
-        # redirect to the associates job page
-        return redirect(url_for('admin.list_associates'))
+            flash('You have successfully edited the Associates Job.')
+        except MySQLdb.IntegrityError:
+            # redirect to the associates job page
+            return redirect(url_for('admin.list_associates'))
 
-    form.name.data = associate.name
-    form.description.data = associate.description
+            # in case associates job name already exists
+            flash('Error: this Associates Job already exists.')
 
-    associate.date = form.date.data
-    associate.start = form.start_at.data
-    associate.end = form.end_at.data
     return render_template('admin/associates/associate.html', action="Edit",
                            add_associate=add_associate, form=form,
                            associate=associate, title="Edit Associates Job")
@@ -404,13 +446,14 @@ def edit_associate(id):
 @login_required
 def delete_associate(id):
     """
-    Delete a associate job from the database
+    Delete an associate job from the database
     """
     check_admin()
-
+    ### Queries the associates job to delete
     associate = Associates.query.get_or_404(id)
     db.session.delete(associate)
     db.session.commit()
+
     flash('You have successfully deleted the Associates job.')
 
     # redirect to the associate job page
@@ -429,19 +472,26 @@ def list_bikes():
     check_admin()
 
     bikes = Bike.query.all()
-
+    new_bikes = []
     for job in bikes:
+        #### Case where employees have been assigned to a Job ###
         if (job.employees != None):
+            ### Delete the job from the Bikes FSP Jobs
             db.session.delete(job)
             db.session.commit()
+
+            ### Query all Freshman db entries
             freshmans = Freshman.query.all()
-    
+            ### Obtain the employees for the current Bikes Job
             employees = str(job.employees)
             assigned_people = employees.split()
+
             count = False
+            ### Iterate through the assigned people
             for person in assigned_people:
                 for freshman in freshmans:
                     if freshman.netID == person:
+                        ### Create "finished assigning" job to the Done db
                         fin_job = Done(name=job.name,
                                         description=job.description,
                                         date=job.date,
@@ -454,9 +504,11 @@ def list_bikes():
                                         department="bike",
                                         points_given=False)
                         try:
-                            # add done job to the database
+                            # Add that the job to the Done db
                             db.session.add(fin_job)
                             db.session.commit()
+                            # Some handling to make sure the message below only
+                            # shows once if there are multiple jobs being re-assigned
                             if not count:
                                 flash('Some Bike Jobs have just been assigned: Please refresh page')
                                 count = True
@@ -464,24 +516,34 @@ def list_bikes():
                         except:
                             # in case done job name already exists
                             flash('Error: this Bike Job already exists in Done.')
+        ### De-display job from main if the job has been sent out
+        elif job.sent == True:
+            pass
+        ### Only display the job if it has not been sent out and there are no students assigned
+        else:
+            new_bikes.append(job)
 
     return render_template('admin/bikes/bikes.html',
-                           bikes=bikes, title="Beer Bike Jobs")
+                           bikes=new_bikes, title="Beer Bike Jobs")
 
 @admin.route('/bike/form', methods=['GET', 'POST'])
 @login_required
 def list_sentout_but_not_assigned_bike():
     """
-    List all bike jobs
+    List all bike jobs that have been sentout but not assigned
+    Should de-display the jobs that have "sentout" col == True from "bikes"
+        and display the job at "bikes/sentout" 
     """
     check_admin()
 
-    associates = Bike.query.all()
+    ### Queries all Bikes Jobs
+    bikes = Bike.query.all()
     sent_but_not_assigned = []
-    for job in associates:
-        if not (job.sent or str(job.employees)):
+    for job in bikes:
+        ### If the job has been sent out or there are no employees assigned
+        if not job.sent and (job.employees == None):
             sent_but_not_assigned.append(job)
-
+    ### Displays the Jobs for sentout but not assigned
     return render_template('admin/bikes/bikes-sentout.html',
                            done=sent_but_not_assigned, title="Bike Jobs")
 
@@ -489,13 +551,16 @@ def list_sentout_but_not_assigned_bike():
 @login_required
 def points_bike():
     """
-    List all bike jobs
+    Only displays jobs that are bikes jobs and if point have not been assigned
     """
     check_admin()
 
+    ### Queries all the jobs in the Done db
     jobs = Done.query.all()
     fin_job = []
     for job in jobs:
+        ### Only displays jobs that are bike jobs
+        ###     and if point have not been assigned
         if (str(job.department) == 'bike') and not job.points_given:
             fin_job.append(job)
 
@@ -506,11 +571,13 @@ def points_bike():
 @login_required
 def add_points_bike(id, points):
     """
-    Add points for freshman for bike jobs
+    Add points functionality for freshman for Bikes jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Assigns points
     freshman.fsp += points
     db.session.commit()
     flash('You have successfully added FSPs for ' + freshman.name + '.')
@@ -524,11 +591,13 @@ def add_points_bike(id, points):
 @login_required
 def remove_points_bike(id, points):
     """
-    Remove points for freshman for bike jobs
+    Remove points functionality for freshman for bikes jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Removes points
     freshman.fsp -= points
     db.session.commit()
     flash('You have successfully removed FSPs for ' + freshman.name + '.')
@@ -546,7 +615,9 @@ def remove_fin_job_bike(id):
     """
     check_admin()
 
+    ### Queries the job from Done db
     job = Done.query.get_or_404(id)
+    # Sets that points have been assigned
     job.points_given = True
     db.session.commit()
     flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
@@ -563,11 +634,13 @@ def add_bike():
     Add a bikes job to the database
     """
     check_admin()
+    ### Specifies adding job in bike.html
+    add_bike = 1
 
-    add_bike = True
-
+    ### Calls an Bike Form
     form = BikeForm()
     if form.validate_on_submit():
+        ### Assigns data from form
         bike = Bike(name=form.name.data,
                                 description=form.description.data,
                                 date=form.date.data,
@@ -588,7 +661,7 @@ def add_bike():
         # redirect to bikes job page
         return redirect(url_for('admin.list_bikes'))
 
-    # load bikes template
+    # load bikes main page
     return render_template('admin/bikes/bike.html', action="Add",
                            add_bike=add_bike, form=form,
                            title="Add Beer Bike Job")
@@ -601,21 +674,26 @@ def duplicate_bike(id):
     """
     check_admin()
 
+    ### Specifies duplicating job in bike.html
     add_bike = 3
-
+    ### Queries the bike job to duplicate
     bike = Bike.query.get_or_404(id)
 
+    ### Check to see if duplication has occurred before
     iter_num = bike.name[-1]
     try:
+        # Successfully adds 1 to count
         iter_num = int(iter_num) + 1
     except:
         iter_num = 1
-
+    ### Updates the Job name
     if (iter_num > 1):
+        # Only changes the number
         name = bike.name[:-1] + str(iter_num)
     else:
+        # Adds a number to the end
         name = bike.name + " " + str(iter_num)
-    
+    ### Builds the duplicate bikes job
     dup_bike = Bike(name=name,
                             description=bike.description,
                             date=bike.date,
@@ -626,7 +704,7 @@ def duplicate_bike(id):
                             sent=bike.sent)
     
     try:
-        # add bike job to the database
+        # Adds duplciate bike job to the database
         db.session.add(dup_bike)
         db.session.commit()
         flash('You have successfully duplicated the Bike job.')
@@ -645,13 +723,15 @@ def duplicate_bike(id):
 @login_required
 def edit_bike(id):
     """
-    Edit a bikes
+    Edit a bikes job
     """
     check_admin()
 
-    add_bike = False
-
+    ### Specifies editting job in bikes.html
+    add_bike = 2
+    ### Queries the bikes job to edit
     bike = Bike.query.get_or_404(id)
+    ### Calls an Bike Form
     form = BikeForm(obj=bike)
     if form.validate_on_submit():
         bike.name = form.name.data
@@ -662,17 +742,19 @@ def edit_bike(id):
         bike.fsp = form.fsp.data
         bike.numPeople = form.numPeople.data
         db.session.commit()
-        flash('You have successfully edited the Beer Bike Job.')
+        try:
+            db.session.commit()
+            # redirect to the bikes job page
+            return redirect(url_for('admin.list_bikes'))
 
-        # redirect to the bikes job page
-        return redirect(url_for('admin.list_bikes'))
+            flash('You have successfully edited the Bikes Job.')
+        except MySQLdb.IntegrityError:
+            # redirect to the bikes job page
+            return redirect(url_for('admin.list_bikes'))
 
-    form.name.data = bike.name
-    form.description.data = bike.description
+            # in case associates job name already exists
+            flash('Error: this Bikes Job already exists.')
 
-    bike.date = form.date.data
-    bike.start = form.start_at.data
-    bike.end = form.end_at.data
     return render_template('admin/bikes/bike.html', action="Edit",
                            add_bike=add_bike, form=form,
                            bike=bike, title="Edit Beer Bike Job")
@@ -684,10 +766,11 @@ def delete_bike(id):
     Delete a bikes job from the database
     """
     check_admin()
-
+    ### Queries the bikes job to delete
     bike = Bike.query.get_or_404(id)
     db.session.delete(bike)
     db.session.commit()
+    
     flash('You have successfully deleted the Beer Bike job.')
 
     # redirect to the bikes job page
@@ -706,19 +789,26 @@ def list_cularts():
     check_admin()
 
     cularts = CulArt.query.all()
-
+    new_cularts = []
     for job in cularts:
+        #### Case where cularts have been assigned to a Job ###
         if (job.employees != None):
+            ### Delete the job from the CulArt FSP Jobs
             db.session.delete(job)
             db.session.commit()
+
+            ### Query all Freshman db entries
             freshmans = Freshman.query.all()
-    
+            ### Obtain the employees for the current culart Job
             employees = str(job.employees)
             assigned_people = employees.split()
+
             count = False
+            ### Iterate through the assigned people
             for person in assigned_people:
                 for freshman in freshmans:
                     if freshman.netID == person:
+                        ### Create "finished assigning" job to the Done db
                         fin_job = Done(name=job.name,
                                         description=job.description,
                                         date=job.date,
@@ -731,9 +821,11 @@ def list_cularts():
                                         department="culart",
                                         points_given=False)
                         try:
-                            # add done job to the database
+                            # Add that the job to the Done db
                             db.session.add(fin_job)
                             db.session.commit()
+                            # Some handling to make sure the message below only
+                            # shows once if there are multiple jobs being re-assigned
                             if not count:
                                 flash('Some C & A Jobs have just been assigned: Please refresh page')
                                 count = True
@@ -741,24 +833,33 @@ def list_cularts():
                         except:
                             # in case done job name already exists
                             flash('Error: this C & A Job already exists in Done.')
-
+        ### De-display job from main if the job has been sent out
+        elif job.sent == True:
+            pass
+        ### Only display the job if it has not been sent out and there are no students assigned
+        else:
+            new_associates.append(job)
     return render_template('admin/cularts/cularts.html',
-                           cularts=cularts, title="C & A Jobs")
+                           cularts=new_cularts, title="C & A Jobs")
 
 @admin.route('/culart/form', methods=['GET', 'POST'])
 @login_required
 def list_sentout_but_not_assigned_culart():
     """
-    List all C & A jobs
+    List all culart jobs that have been sentout but not assigned
+    Should de-display the jobs that have "sentout" col == True from "culart"
+        and display the job at "cularts/sentout" 
     """
     check_admin()
 
-    associates = CulArt.query.all()
+    ### Queries all Associates Jobs
+    culart = CulArt.query.all()
     sent_but_not_assigned = []
-    for job in associates:
-        if not (job.sent or str(job.employees)):
+    for job in culart:
+        ### If the job has been sent out or there are no employees assigned
+        if not job.sent and (job.employees == None):
             sent_but_not_assigned.append(job)
-
+    ### Displays the Jobs for sentout but not assigned
     return render_template('admin/cularts/cularts-sentout.html',
                            done=sent_but_not_assigned, title="C & A Jobs")
 
@@ -766,13 +867,16 @@ def list_sentout_but_not_assigned_culart():
 @login_required
 def points_culart():
     """
-    List all C & A jobs
+    Only displays jobs that are C & A jobs and if points have not been assigned
     """
     check_admin()
 
+    ### Queries all the jobs in the Done db
     jobs = Done.query.all()
     fin_job = []
     for job in jobs:
+        ### Only displays jobs that are associates jobs
+        ###     and if point have not been assigned
         if (str(job.department) == 'culart') and not job.points_given:
             fin_job.append(job)
 
@@ -783,11 +887,13 @@ def points_culart():
 @login_required
 def add_points_culart(id, points):
     """
-    Add points for freshman for C & A jobs
+    Add points functionality for freshman for C & A jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Assigns points
     freshman.fsp += points
     db.session.commit()
     flash('You have successfully added FSPs for ' + freshman.name + '.')
@@ -801,11 +907,13 @@ def add_points_culart(id, points):
 @login_required
 def remove_points_culart(id, points):
     """
-    Remove points for freshman for C & A jobs
+    Remove points functionality for freshman for C & A jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Removes points
     freshman.fsp -= points
     db.session.commit()
     flash('You have successfully removed FSPs for ' + freshman.name + '.')
@@ -823,7 +931,9 @@ def remove_fin_job_culart(id):
     """
     check_admin()
 
+    ### Queries the job from Done db
     job = Done.query.get_or_404(id)
+    # Sets that points have been assigned
     job.points_given = True
     db.session.commit()
     flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
@@ -840,11 +950,13 @@ def add_culart():
     Add a cularts job to the database
     """
     check_admin()
+    ### Specifies adding job in culart.html
+    add_culart = 1
 
-    add_culart = True
-
+    ### Calls an CulArt Form
     form = CulArtForm()
     if form.validate_on_submit():
+        ### Assigns data from form
         culart = CulArt(name=form.name.data,
                                 description=form.description.data,
                                 date=form.date.data,
@@ -878,21 +990,27 @@ def duplicate_culart(id):
     """
     check_admin()
 
+    ### Specifies duplicating job in culart.html
     add_culart = 3
-
+    ### Queries the culart job to duplicate
     culart = CulArt.query.get_or_404(id)
 
+    ### Check to see if duplication has occurred before
     iter_num = culart.name[-1]
     try:
+        # Successfully adds 1 to count
         iter_num = int(iter_num) + 1
     except:
+        # Count should start at 1
         iter_num = 1
-
+    ### Updates the Job name
     if (iter_num > 1):
+        # Only changes the number
         name = culart.name[:-1] + str(iter_num)
     else:
+        # Adds a number to the end
         name = culart.name + " " + str(iter_num)
-    
+    ### Builds the duplicate C & A job
     dup_culart = CulArt(name=name,
                             description=culart.description,
                             date=culart.date,
@@ -926,9 +1044,11 @@ def edit_culart(id):
     """
     check_admin()
 
-    add_culart = False
-
+    ### Specifies editting job in culart.html
+    add_culart = 2
+    ### Queries the C & A job to edit
     culart = CulArt.query.get_or_404(id)
+    ### Calls an C & A Form
     form = CulArtForm(obj=culart)
     if form.validate_on_submit():
         culart.name = form.name.data
@@ -939,17 +1059,19 @@ def edit_culart(id):
         culart.fsp = form.fsp.data
         culart.numPeople = form.numPeople.data
         db.session.commit()
-        flash('You have successfully edited the C & A Job.')
+        try:
+            db.session.commit()
+            # redirect to the associates job page
+            return redirect(url_for('admin.list_cularts'))
 
-        # redirect to the culart job page
-        return redirect(url_for('admin.list_cularts'))
+            flash('You have successfully edited the C & A Job.')
+        except MySQLdb.IntegrityError:
+            # redirect to the associates job page
+            return redirect(url_for('admin.list_cularts'))
 
-    form.name.data = culart.name
-    form.description.data = culart.description
+            # in case associates job name already exists
+            flash('Error: this Associates Job already exists.')
 
-    culart.date = form.date.data
-    culart.start = form.start_at.data
-    culart.end = form.end_at.data
     return render_template('admin/cularts/culart.html', action="Edit",
                            add_culart=add_culart, form=form,
                            culart=culart, title="Edit C & A Job")
@@ -961,7 +1083,7 @@ def delete_culart(id):
     Delete a cularts job from the database
     """
     check_admin()
-
+    ### Queries the C & A job to delete
     culart = CulArt.query.get_or_404(id)
     db.session.delete(culart)
     db.session.commit()
@@ -983,19 +1105,26 @@ def list_merch():
     check_admin()
 
     merchs = Merch.query.all()
-
+    new_merch = []
     for job in merchs:
+        #### Case where employees have been assigned to a Job ###
         if (job.employees != None):
+            ### Delete the job from the Merch FSP Jobs
             db.session.delete(job)
             db.session.commit()
+
+            ### Query all Freshman db entries
             freshmans = Freshman.query.all()
-    
+            ### Obtain the employees for the current Merch Job
             employees = str(job.employees)
             assigned_people = employees.split()
+
             count = False
+            ### Iterate through the assigned people
             for person in assigned_people:
                 for freshman in freshmans:
                     if freshman.netID == person:
+                        ### Create "finished assigning" job to the Done db
                         fin_job = Done(name=job.name,
                                         description=job.description,
                                         date=job.date,
@@ -1008,9 +1137,11 @@ def list_merch():
                                         department="merch",
                                         points_given=False)
                         try:
-                            # add done job to the database
+                            # Add done job to the database
                             db.session.add(fin_job)
                             db.session.commit()
+                            # Some handling to make sure the message below only
+                            # shows once if there are multiple jobs being re-assigned
                             if not count:
                                 flash('Some Merch Jobs have just been assigned: Please refresh page')
                                 count = True
@@ -1018,24 +1149,34 @@ def list_merch():
                         except:
                             # in case done job name already exists
                             flash('Error: this Merch Job already exists in Done.')
+        ### De-display job from main if the job has been sent out
+        elif job.sent == True:
+            pass
+        ### Only display the job if it has not been sent out and there are no students assigned
+        else:
+            new_merch.append(job)
 
     return render_template('admin/merchs/merchs.html',
-                           merchs=merchs, title="Merch Jobs")
+                           merchs=new_merch, title="Merch Jobs")
 
 @admin.route('/merch/form', methods=['GET', 'POST'])
 @login_required
 def list_sentout_but_not_assigned_merch():
     """
-    List all merch jobs
+    List all merch jobs that have been sentout but not assigned
+    Should de-display the jobs that have "sentout" col == True from "merch"
+        and display the job at "merchs/sentout" 
     """
     check_admin()
 
+    ### Queries all Merch Jobs
     associates = Merch.query.all()
     sent_but_not_assigned = []
     for job in associates:
+        ### If the job has been sent out or there are no employees assigned
         if not (job.sent or str(job.employees)):
             sent_but_not_assigned.append(job)
-
+    ### Displays the Jobs for sentout but not assigned
     return render_template('admin/merchs/merchs-sentout.html',
                            done=sent_but_not_assigned, title="Merch Jobs")
 
@@ -1043,13 +1184,16 @@ def list_sentout_but_not_assigned_merch():
 @login_required
 def points_merch():
     """
-    List all merch jobs
+    Only displays jobs that are merch jobs and if point have not been assigned
     """
     check_admin()
 
+    ### Queries all the jobs in the Done db
     jobs = Done.query.all()
     fin_job = []
     for job in jobs:
+        ### Only displays jobs that are merch jobs
+        ###     and if point have not been assigned
         if (str(job.department) == 'merch') and not job.points_given:
             fin_job.append(job)
 
@@ -1060,11 +1204,13 @@ def points_merch():
 @login_required
 def add_points_merch(id, points):
     """
-    Add points for freshman for merch jobs
+    Add points for freshman for Merch jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Assigns points
     freshman.fsp += points
     db.session.commit()
     flash('You have successfully added FSPs for ' + freshman.name + '.')
@@ -1078,11 +1224,13 @@ def add_points_merch(id, points):
 @login_required
 def remove_points_merch(id, points):
     """
-    Remove points for freshman for merch jobs
+    Remove points functionality for freshman for merch jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Removes points
     freshman.fsp -= points
     db.session.commit()
     flash('You have successfully removed FSPs for ' + freshman.name + '.')
@@ -1100,7 +1248,9 @@ def remove_fin_job_merch(id):
     """
     check_admin()
 
+    ### Queries the job from Done db
     job = Done.query.get_or_404(id)
+    # Sets that points have been assigned
     job.points_given = True
     db.session.commit()
     flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
@@ -1117,11 +1267,13 @@ def add_merch():
     Add a merch job to the database
     """
     check_admin()
+    ### Specifies adding job in merch.html
+    add_merch = 1
 
-    add_merch = True
-
+    ### Calls a Merch Form
     form = MerchForm()
     if form.validate_on_submit():
+        ### Assigns data from form
         merch = Merch(name=form.name.data,
                                 description=form.description.data,
                                 date=form.date.data,
@@ -1139,10 +1291,10 @@ def add_merch():
             # in case merch job name already exists
             flash('Error: this Merch Job already exists.')
 
-        # redirect to merch job page
+        # redirect to merch job page once done
         return redirect(url_for('admin.list_merch'))
 
-    # load merch template
+    # load merch main page
     return render_template('admin/merchs/merch.html', action="Add",
                            add_merch=add_merch, form=form,
                            title="Add Merch Job")
@@ -1155,21 +1307,26 @@ def duplicate_merch(id):
     """
     check_admin()
 
+    ### Specifies duplicating job in merch.html
     add_merch = 3
-
+    ### Queries the merch job to duplicate
     merch = Merch.query.get_or_404(id)
 
+    ### Check to see if duplication has occurred before
     iter_num = merch.name[-1]
     try:
+        # Successfully adds 1 to count
         iter_num = int(iter_num) + 1
     except:
         iter_num = 1
-
+    ### Updates the Job name
     if (iter_num > 1):
+        # Only changes the number
         name = merch.name[:-1] + str(iter_num)
     else:
+        # Adds a number to the end
         name = merch.name + " " + str(iter_num)
-    
+    ### Builds the duplicate merch job
     dup_merch = Merch(name=name,
                             description=merch.description,
                             date=merch.date,
@@ -1180,7 +1337,7 @@ def duplicate_merch(id):
                             sent=merch.sent)
     
     try:
-        # add merch job to the database
+        # add duplciate merch job to the database
         db.session.add(dup_merch)
         db.session.commit()
         flash('You have successfully duplicated the Merch job.')
@@ -1199,13 +1356,15 @@ def duplicate_merch(id):
 @login_required
 def edit_merch(id):
     """
-    Edit a merch
+    Edit a merch job
     """
     check_admin()
 
-    add_merch = False
-
+    ### Specifies editting job in merch.html
+    add_merch = 2
+    ### Queries the merch job to edit
     merch = Merch.query.get_or_404(id)
+    ### Calls a Merch Form
     form = MerchForm(obj=merch)
     if form.validate_on_submit():
         merch.name = form.name.data
@@ -1215,18 +1374,19 @@ def edit_merch(id):
         merch.end = form.end_at.data
         merch.fsp = form.fsp.data
         merch.numPeople = form.numPeople.data
-        db.session.commit()
-        flash('You have successfully edited the Merch Job.')
+        try:
+            db.session.commit()
+            # redirect to the merch job page
+            return redirect(url_for('admin.list_associates'))
 
-        # redirect to the merch job page
-        return redirect(url_for('admin.list_merch'))
+            flash('You have successfully edited the Merch Job.')
+        except MySQLdb.IntegrityError:
+            # redirect to the merch job page
+            return redirect(url_for('admin.list_merch'))
 
-    form.name.data = merch.name
-    form.description.data = merch.description
+            # in case merch job name already exists
+            flash('Error: this Merch Job already exists.')
 
-    merch.date = form.date.data
-    merch.start = form.start_at.data
-    merch.end = form.end_at.data
     return render_template('admin/merchs/merch.html', action="Edit",
                            add_merch=add_merch, form=form,
                            merch=merch, title="Edit Merch Job")
@@ -1238,7 +1398,7 @@ def delete_merch(id):
     Delete a merch job from the database
     """
     check_admin()
-
+    ### Queries the merch job to delete
     merch = Merch.query.get_or_404(id)
     db.session.delete(merch)
     db.session.commit()
@@ -1260,19 +1420,26 @@ def list_spirit():
     check_admin()
 
     spirits = Spirit.query.all()
-
+    new_spirit = []
     for job in spirits:
+        #### Case where employees have been assigned to a Job ###
         if (job.employees != None):
+            ### Delete the job from the Spirit FSP Jobs
             db.session.delete(job)
             db.session.commit()
+
+            ### Query all Freshman db entries
             freshmans = Freshman.query.all()
-    
+            ### Obtain the employees for the current Spirit Job
             employees = str(job.employees)
             assigned_people = employees.split()
+
             count = False
+            ### Iterate through the assigned people
             for person in assigned_people:
                 for freshman in freshmans:
                     if freshman.netID == person:
+                        ### Create "finished assigning" job to the Done db
                         fin_job = Done(name=job.name,
                                         description=job.description,
                                         date=job.date,
@@ -1285,34 +1452,46 @@ def list_spirit():
                                         department="spirit",
                                         points_given=False)
                         try:
-                            # add done job to the database
+                            # Add that the job to the Done db
                             db.session.add(fin_job)
                             db.session.commit()
+                            # Some handling to make sure the message below only
+                            # shows once if there are multiple jobs being re-assigned
                             if not count:
                                 flash('Some Spirit Jobs have just been assigned: Please refresh page')
                                 count = True
-                            # flash('You have successfully added a new assigned Spirit Job.')
                         except:
                             # in case done job name already exists
                             flash('Error: this Spirit Job already exists in Done.')
+        ### De-display job from main if the job has been sent out
+        elif job.sent == True:
+            pass
+        ### Only display the job if it has not been sent out and there are no students assigned
+        else:
+            new_spirit.append(job)
 
+    ### Rendering of HTML 
     return render_template('admin/spirits/spirits.html',
-                           spirits=spirits, title="Spirit Jobs")
+                           spirits=new_spirit, title="Spirit Jobs")
 
 @admin.route('/spirit/form', methods=['GET', 'POST'])
 @login_required
 def list_sentout_but_not_assigned_spirit():
     """
-    List all spirit jobs
+    List all spirit jobs that have been sentout but not assigned
+    Should de-display the jobs that have "sentout" col == True from "spirit"
+        and display the job at "spirits/sentout" 
     """
     check_admin()
 
+    ### Queries all Spirit Jobs
     associates = Spirit.query.all()
     sent_but_not_assigned = []
     for job in associates:
+        ### If the job has been sent out or there are no employees assigned
         if not (job.sent or str(job.employees)):
             sent_but_not_assigned.append(job)
-
+    ### Displays the Jobs for sentout but not assigned
     return render_template('admin/spirits/spirits-sentout.html',
                            done=sent_but_not_assigned, title="Spirit Jobs")
 
@@ -1320,13 +1499,16 @@ def list_sentout_but_not_assigned_spirit():
 @login_required
 def points_spirit():
     """
-    List all spirit jobs
+    Only displays jobs that are spirit jobs and if point have not been assigned
     """
     check_admin()
 
+    ### Queries all the jobs in the Done db
     jobs = Done.query.all()
     fin_job = []
     for job in jobs:
+        ### Only displays jobs that are spirit jobs
+        ###     and if point have not been assigned
         if (str(job.department) == 'spirit') and not job.points_given:
             fin_job.append(job)
 
@@ -1337,11 +1519,13 @@ def points_spirit():
 @login_required
 def add_points_spirit(id, points):
     """
-    Add points for freshman for spirit jobs
+    Add points functionality for freshman for Spirit jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Assigns points
     freshman.fsp += points
     db.session.commit()
     flash('You have successfully added FSPs for ' + freshman.name + '.')
@@ -1355,11 +1539,13 @@ def add_points_spirit(id, points):
 @login_required
 def remove_points_spirit(id, points):
     """
-    Remove points for freshman for spirit jobs
+    Remove points functionality for freshman for spirit jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Removes points
     freshman.fsp -= points
     db.session.commit()
     flash('You have successfully removed FSPs for ' + freshman.name + '.')
@@ -1377,7 +1563,9 @@ def remove_fin_job_spirit(id):
     """
     check_admin()
 
+    ### Queries the job from Done db
     job = Done.query.get_or_404(id)
+    # Sets that points have been assigned
     job.points_given = True
     db.session.commit()
     flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
@@ -1394,11 +1582,13 @@ def add_spirit():
     Add a spirit job to the database
     """
     check_admin()
+    ### Specifies adding job in spirit.html
+    add_spirit = 1
 
-    add_spirit = True
-
+    ### Calls an Spirit Form
     form = SpiritForm()
     if form.validate_on_submit():
+        ### Assigns data from form
         spirit = Spirit(name=form.name.data,
                                 description=form.description.data,
                                 date=form.date.data,
@@ -1416,10 +1606,10 @@ def add_spirit():
             # in case spirit job name already exists
             flash('Error: this Spirit Job already exists.')
 
-        # redirect to spirit job page
+        # redirect to spirit job page once done
         return redirect(url_for('admin.list_spirit'))
 
-    # load spirit template
+    # load spirit main page
     return render_template('admin/spirits/spirit.html', action="Add",
                            add_spirit=add_spirit, form=form,
                            title="Add Spirit Job")
@@ -1432,21 +1622,27 @@ def duplicate_spirit(id):
     """
     check_admin()
 
+    ### Specifies duplicating job in spirit.html
     add_spirit = 3
-
+    ### Queries the spirit job to duplicate
     spirit = Spirit.query.get_or_404(id)
 
+    ### Check to see if duplication has occurred before
     iter_num = spirit.name[-1]
     try:
+        # Successfully adds 1 to count
         iter_num = int(iter_num) + 1
     except:
+        # Count should start at 1
         iter_num = 1
-
+    ### Updates the Job name
     if (iter_num > 1):
+        # Only changes the number
         name = spirit.name[:-1] + str(iter_num)
     else:
+        # Adds a number to the end
         name = spirit.name + " " + str(iter_num)
-    
+    ### Builds the duplicate spirit job
     dup_spirit = Spirit(name=name,
                             description=spirit.description,
                             date=spirit.date,
@@ -1480,9 +1676,11 @@ def edit_spirit(id):
     """
     check_admin()
 
-    add_spirit = False
-
+    ### Specifies editting job in spirit.html
+    add_spirit = 2
+    ### Queries the spirit job to edit
     spirit = Spirit.query.get_or_404(id)
+    ### Calls a Spirit Form
     form = SpiritForm(obj=spirit)
     if form.validate_on_submit():
         spirit.name = form.name.data
@@ -1492,18 +1690,19 @@ def edit_spirit(id):
         spirit.end = form.end_at.data
         spirit.fsp = form.fsp.data
         spirit.numPeople = form.numPeople.data
-        db.session.commit()
-        flash('You have successfully edited the Spirit Job.')
+        try:
+            db.session.commit()
+            # redirect to the spirit job page
+            return redirect(url_for('admin.list_spirit'))
 
-        # redirect to the spirit job page
-        return redirect(url_for('admin.list_spirit'))
+            flash('You have successfully edited the Spirit Job.')
+        except MySQLdb.IntegrityError:
+            # redirect to the spirit job page
+            return redirect(url_for('admin.list_spirit'))
 
-    form.name.data = spirit.name
-    form.description.data = spirit.description
-
-    spirit.date = form.date.data
-    spirit.start = form.start_at.data
-    spirit.end = form.end_at.data
+            # in case spirit job name already exists
+            flash('Error: this Spirit Job already exists.')
+        
     return render_template('admin/spirits/spirit.html', action="Edit",
                            add_spirit=add_spirit, form=form,
                            spirit=spirit, title="Edit Spirit Job")
@@ -1515,7 +1714,7 @@ def delete_spirit(id):
     Delete a spirit job from the database
     """
     check_admin()
-
+    ### Queries the spirit job to delete
     spirit = Spirit.query.get_or_404(id)
     db.session.delete(spirit)
     db.session.commit()
@@ -1537,19 +1736,25 @@ def list_socials():
     check_admin()
 
     socials = Socials.query.all()
-
+    new_socials = []
     for job in socials:
+        #### Case where employees have been assigned to a Job ###
         if (job.employees != None):
             db.session.delete(job)
             db.session.commit()
+
+            ### Query all Freshman db entries
             freshmans = Freshman.query.all()
-    
+            ### Obtain the employees for the current Spirit Job
             employees = str(job.employees)
             assigned_people = employees.split()
+
             count = False
+            ### Iterate through the assigned people
             for person in assigned_people:
                 for freshman in freshmans:
                     if freshman.netID == person:
+                        ### Create "finished assigning" job to the Done db
                         fin_job = Done(name=job.name,
                                         description=job.description,
                                         date=job.date,
@@ -1562,34 +1767,46 @@ def list_socials():
                                         department="socials",
                                         points_given=False)
                         try:
-                            # add done job to the database
+                            # add done job to the Done db
                             db.session.add(fin_job)
                             db.session.commit()
+                            # Some handling to make sure the message below only
+                            # shows once if there are multiple jobs being re-assigned
                             if not count:
                                 flash('Some Socials Jobs have just been assigned: Please refresh page')
                                 count = True
-                            # flash('You have successfully added a new assigned Socials Job.')
                         except:
                             # in case done job name already exists
                             flash('Error: this Socials Job already exists in Done.')
+        ### De-display job from main if the job has been sent out
+        elif job.sent == True:
+            pass
+        ### Only display the job if it has not been sent out and there are no students assigned
+        else:
+            new_socials.append(job)
 
+    ### Rendering of HTML        
     return render_template('admin/socials/socials.html',
-                           socials=socials, title="Socials Jobs")
+                           socials=new_socials, title="Socials Jobs")
 
 @admin.route('/socials/form', methods=['GET', 'POST'])
 @login_required
 def list_sentout_but_not_assigned_social():
     """
-    List all associates jobs
+    List all social jobs that have been sentout but not assigned
+    Should de-display the jobs that have "sentout" col == True from "social"
+        and display the job at "socials/sentout" 
     """
     check_admin()
 
+    ### Queries all Social Jobs
     associates = Socials.query.all()
     sent_but_not_assigned = []
     for job in associates:
+        ### If the job has been sent out or there are no employees assigned
         if not (job.sent or str(job.employees)):
             sent_but_not_assigned.append(job)
-
+    ### Displays the Jobs for sentout but not assigned
     return render_template('admin/socials/socials-sentout.html',
                            done=sent_but_not_assigned, title="Socials Jobs")
 
@@ -1597,13 +1814,16 @@ def list_sentout_but_not_assigned_social():
 @login_required
 def points_social():
     """
-    List all socials jobs
+    Only displays jobs that are social jobs and if point have not been assigned
     """
     check_admin()
 
+    ### Queries all the jobs in the Done db
     jobs = Done.query.all()
     fin_job = []
     for job in jobs:
+        ### Only displays jobs that are social jobs
+        ###     and if point have not been assigned
         if (str(job.department) == 'socials') and not job.points_given:
             fin_job.append(job)
 
@@ -1618,7 +1838,9 @@ def add_points_social(id, points):
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Assigns points
     freshman.fsp += points
     db.session.commit()
     flash('You have successfully added FSPs for ' + freshman.name + '.')
@@ -1632,11 +1854,13 @@ def add_points_social(id, points):
 @login_required
 def remove_points_social(id, points):
     """
-    Remove points for freshman for socials jobs
+    Remove points functionality for freshman for socials jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Removes points
     freshman.fsp -= points
     db.session.commit()
     flash('You have successfully removed FSPs for ' + freshman.name + '.')
@@ -1654,7 +1878,9 @@ def remove_fin_job_social(id):
     """
     check_admin()
 
+    ### Queries the job from Done db
     job = Done.query.get_or_404(id)
+    # Sets that points have been assigned
     job.points_given = True
     db.session.commit()
     flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
@@ -1671,11 +1897,13 @@ def add_social():
     Add a socials job to the database
     """
     check_admin()
+    ### Specifies adding job in social.html
+    add_social = 1
 
-    add_social = True
-
+    ### Calls an Associates Form
     form = SocialsForm()
     if form.validate_on_submit():
+        ### Assigns data from form
         social = Socials(name=form.name.data,
                                 description=form.description.data,
                                 date=form.date.data,
@@ -1693,7 +1921,7 @@ def add_social():
             # in case socials job name already exists
             flash('Error: this Socials Job already exists.')
 
-        # redirect to socials job page
+        # redirect to socials job page once done
         return redirect(url_for('admin.list_socials'))
 
     # load socials template
@@ -1709,21 +1937,27 @@ def duplicate_social(id):
     """
     check_admin()
 
+    ### Specifies duplicating job in social.html
     add_social = 3
-
+    ### Queries the socials job to duplicate
     social = Socials.query.get_or_404(id)
 
+    ### Check to see if duplication has occurred before
     iter_num = social.name[-1]
     try:
+        # Successfully adds 1 to count
         iter_num = int(iter_num) + 1
     except:
+        # Count should start at 1
         iter_num = 1
-
+    ### Updates the Job name
     if (iter_num > 1):
+        # Only changes the number
         name = social.name[:-1] + str(iter_num)
     else:
+        # Adds a number to the end
         name = social.name + " " + str(iter_num)
-    
+    ### Builds the duplicate socials job
     dup_social = Socials(name=name,
                             description=social.description,
                             date=social.date,
@@ -1753,13 +1987,15 @@ def duplicate_social(id):
 @login_required
 def edit_social(id):
     """
-    Edit a socials
+    Edit a socials job
     """
     check_admin()
 
-    add_social = False
-
+    ### Specifies editting job in social.html
+    add_social = 2
+    ### Queries the socials job to edit
     social = Socials.query.get_or_404(id)
+    ### Calls a Socials Form
     form = SocialsForm(obj=social)
     if form.validate_on_submit():
         social.name = form.name.data
@@ -1769,18 +2005,19 @@ def edit_social(id):
         social.end = form.end_at.data
         social.fsp = form.fsp.data
         social.numPeople = form.numPeople.data
-        db.session.commit()
-        flash('You have successfully edited the Socials Job.')
+        try:
+            db.session.commit()
+            # redirect to the socials job page
+            return redirect(url_for('admin.list_socials'))
 
-        # redirect to the socials job page
-        return redirect(url_for('admin.list_socials'))
+            flash('You have successfully edited the Socials Job.')
+        except MySQLdb.IntegrityError:
+            # redirect to the socials job page
+            return redirect(url_for('admin.list_socials'))
 
-    form.name.data = social.name
-    form.description.data = social.description
+            # in case socials job name already exists
+            flash('Error: this Socials Job already exists.')
 
-    social.date = form.date.data
-    social.start = form.start_at.data
-    social.end = form.end_at.data
     return render_template('admin/socials/social.html', action="Edit",
                            add_social=add_social, form=form,
                            social=social, title="Edit Socials Job")
@@ -1792,7 +2029,7 @@ def delete_social(id):
     Delete a socials job from the database
     """
     check_admin()
-
+    ### Queries the socials job to delete
     social = Socials.query.get_or_404(id)
     db.session.delete(social)
     db.session.commit()
@@ -1814,15 +2051,20 @@ def list_slush():
     check_admin()
 
     slushs = Slush.query.all()
-
+    new_slush = []
     for job in slushs:
+        #### Case where employees have been assigned to a Job ###
         if (job.employees != None):
+            ### Delete the job from the Slush FSP Jobs
             db.session.delete(job)
             db.session.commit()
+
+            ### Query all Freshman db entries
             freshmans = Freshman.query.all()
-    
+            ### Obtain the employees for the current Slush Job
             employees = str(job.employees)
             assigned_people = employees.split()
+
             count = False
             for person in assigned_people:
                 for freshman in freshmans:
@@ -1842,31 +2084,41 @@ def list_slush():
                             # add done job to the database
                             db.session.add(fin_job)
                             db.session.commit()
+                            # Some handling to make sure the message below only
+                            # shows once if there are multiple jobs being re-assigned
                             if not count:
                                 flash('Some Slush Jobs have just been assigned: Please refresh page')
                                 count = True
-                            # flash('You have successfully added a new assigned Slush Job.')
                         except:
                             # in case done job name already exists
                             flash('Error: this Slush Job already exists in Done.')
-
+        ### De-display job from main if the job has been sent out
+        elif job.sent == True:
+            pass
+        ### Only display the job if it has not been sent out and there are no students assigned
+        else:
+            new_slush.append(job)
     return render_template('admin/slushs/slushs.html',
-                           slushs=slushs, title="Slush Jobs")
+                           slushs=new_slush, title="Slush Jobs")
 
 @admin.route('/slush/form/', methods=['GET', 'POST'])
 @login_required
 def list_sentout_but_not_assigned_slush():
     """
-    List all slush jobs
+    List all slush jobs that have been sentout but not assigned
+    Should de-display the jobs that have "sentout" col == True from "slush"
+        and display the job at "slushs/sentout" 
     """
     check_admin()
 
+    ### Queries all Slush Jobs
     associates = Slush.query.all()
     sent_but_not_assigned = []
     for job in associates:
+        ### If the job has been sent out or there are no employees assigned
         if not (job.sent or str(job.employees)):
             sent_but_not_assigned.append(job)
-
+    ### Displays the Jobs for sentout but not assigned
     return render_template('admin/slushs/slushs-sentout.html',
                            done=sent_but_not_assigned, title="Slush Jobs")
 
@@ -1874,13 +2126,16 @@ def list_sentout_but_not_assigned_slush():
 @login_required
 def points_slush():
     """
-    List all slush jobs
+    Only displays jobs that are slush jobs and if point have not been assigned
     """
     check_admin()
 
+    ### Queries all the jobs in the Done db
     jobs = Done.query.all()
     fin_job = []
     for job in jobs:
+        ### Only displays jobs that are slush jobs
+        ###     and if point have not been assigned
         if (str(job.department) == 'slush') and not job.points_given:
             fin_job.append(job)
 
@@ -1891,11 +2146,13 @@ def points_slush():
 @login_required
 def add_points_slush(id, points):
     """
-    Add points for freshman for slush jobs
+    Add points functionality for freshman for slush jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Assigns points
     freshman.fsp += points
     db.session.commit()
     flash('You have successfully added FSPs for ' + freshman.name + '.')
@@ -1909,11 +2166,13 @@ def add_points_slush(id, points):
 @login_required
 def remove_points_slush(id, points):
     """
-    Remove points for freshman for slush jobs
+    Remove points functionality for freshman for slush jobs
     """
     check_admin()
 
+    ### Queries a specific freshman from id
     freshman = Freshman.query.get_or_404(id)
+    # Removes points
     freshman.fsp -= points
     db.session.commit()
     flash('You have successfully removed FSPs for ' + freshman.name + '.')
@@ -1931,7 +2190,9 @@ def remove_fin_job_slush(id):
     """
     check_admin()
 
+    ### Queries the job from Done db
     job = Done.query.get_or_404(id)
+    # Sets that points have been assigned
     job.points_given = True
     db.session.commit()
     flash('Successfully finished Job: ' + job.name + ' for Student: ' + job.student)
@@ -1948,19 +2209,22 @@ def add_slush():
     Add a slush job to the database
     """
     check_admin()
+    ### Specifies adding job in slush.html
+    add_slush = 1
 
-    add_slush = True
-
+    ### Calls an Slush Form
     form = SlushForm()
     if form.validate_on_submit():
+        ### Assigns data from form
         slush = Slush(name=form.name.data,
-                                description=form.description.data,
-                                date=form.date.data,
-                                start=form.start_at.data,
-                                end=form.end_at.data,
-                                fsp=form.fsp.data,
-                                numPeople=form.numPeople.data,
-                                sent=False)
+                        description=form.description.data,
+                        date=form.date.data,
+                        start=form.start_at.data,
+                        end=form.end_at.data,
+                        fsp=form.fsp.data,
+                        numPeople=form.numPeople.data,
+                        sent=False)
+
         try:
             # add slush job to the database
             db.session.add(slush)
@@ -1973,7 +2237,7 @@ def add_slush():
         # redirect to slush job page
         return redirect(url_for('admin.list_slush'))
 
-    # load slush template
+    # load slush main page
     return render_template('admin/slushs/slush.html', action="Add",
                            add_slush=add_slush, form=form,
                            title="Add Slush Job")
@@ -1986,21 +2250,27 @@ def duplicate_slush(id):
     """
     check_admin()
 
+    ### Specifies duplicating job in slush.html
     add_slush = 3
-
+    ### Queries the slush job to duplicate
     slush = Slush.query.get_or_404(id)
 
+    ### Check to see if duplication has occurred before
     iter_num = slush.name[-1]
     try:
+        # Successfully adds 1 to count
         iter_num = int(iter_num) + 1
     except:
+        # Count should start at 1
         iter_num = 1
-
+    ### Updates the Job name
     if (iter_num > 1):
+        # Only changes the number
         name = slush.name[:-1] + str(iter_num)
     else:
+        # Adds a number to the end
         name = slush.name + " " + str(iter_num)
-    
+    ### Builds the duplicate slush job
     dup_slush = Slush(name=name,
                             description=slush.description,
                             date=slush.date,
@@ -2011,7 +2281,7 @@ def duplicate_slush(id):
                             sent=slush.sent)
     
     try:
-        # add slush job to the database
+        # add duplciate slush job to the database
         db.session.add(dup_slush)
         db.session.commit()
         flash('You have successfully duplicated the Slush job.')
@@ -2030,13 +2300,15 @@ def duplicate_slush(id):
 @login_required
 def edit_slush(id):
     """
-    Edit a slush
+    Edit a slush job
     """
     check_admin()
 
-    add_slush = False
-
+    ### Specifies editting job in slush.html
+    add_slush = 2
+    ### Queries the slush job to edit
     slush = Slush.query.get_or_404(id)
+    ### Calls a Slush Form
     form = SlushForm(obj=slush)
     if form.validate_on_submit():
         slush.name = form.name.data
@@ -2046,18 +2318,19 @@ def edit_slush(id):
         slush.end = form.end_at.data
         slush.fsp = form.fsp.data
         slush.numPeople = form.numPeople.data
-        db.session.commit()
-        flash('You have successfully edited the Slush Job.')
+        try:
+            db.session.commit()
+            # redirect to the slush job page
+            return redirect(url_for('admin.list_slush'))
 
-        # redirect to the slush job page
-        return redirect(url_for('admin.list_slush'))
+            flash('You have successfully edited the Slush Job.')
+        except MySQLdb.IntegrityError:
+            # redirect to the slush job page
+            return redirect(url_for('admin.list_slush'))
 
-    form.name.data = slush.name
-    form.description.data = slush.description
+            # in case slush job name already exists
+            flash('Error: this Slush Job already exists.')
 
-    slush.date = form.date.data
-    slush.start = form.start_at.data
-    slush.end = form.end_at.data
     return render_template('admin/slushs/slush.html', action="Edit",
                            add_slush=add_slush, form=form,
                            slush=slush, title="Edit Slush Job")
@@ -2069,10 +2342,11 @@ def delete_slush(id):
     Delete a slush job from the database
     """
     check_admin()
-
+    ### Queries the slush job to delete
     slush = Slush.query.get_or_404(id)
     db.session.delete(slush)
     db.session.commit()
+
     flash('You have successfully deleted the Slush job.')
 
     # redirect to the slush job page
@@ -2198,36 +2472,36 @@ def list_employees():
                            employees=employees, title='Employees')
 
 
-# @admin.route('/employees/assign/<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def assign_employee(id):
-#     """
-#     Assign a department and a role to an employee
-#     """
-#     check_admin()
+@admin.route('/employees/assign/<int:id>', methods=['GET', 'POST'])
+@login_required
+def assign_employee(id):
+    """
+    Assign a department and a role to an employee
+    """
+    check_admin()
 
-#     employee = Employee.query.get_or_404(id)
+    employee = Employee.query.get_or_404(id)
 
-#     # prevent admin from being assigned a department or role
-#     if employee.is_admin:
-#         abort(403)
+    # prevent admin from being assigned a department or role
+    if employee.is_admin:
+        abort(403)
 
-#     form = EmployeeAssignForm(obj=employee)
-#     if form.validate_on_submit():
-#         employee.department = form.department.data
-#         employee.role = form.role.data
-#         db.session.add(employee)
-#         db.session.commit()
-#         flash('You have successfully assigned a department and role.')
+    form = EmployeeAssignForm(obj=employee)
+    if form.validate_on_submit():
+        employee.department = form.department.data
+        employee.role = form.role.data
+        db.session.add(employee)
+        db.session.commit()
+        flash('You have successfully assigned a department and role.')
 
-#         # redirect to the roles page
-#         return redirect(url_for('admin.list_employees'))
+        # redirect to the roles page
+        return redirect(url_for('admin.list_employees'))
 
-#     return render_template('admin/employees/employee.html',
-#                            employee=employee, form=form,
-#                            title='Assign Employee')
+    return render_template('admin/employees/employee.html',
+                           employee=employee, form=form,
+                           title='Assign Employee')
 
-# Role Views
+#Role Views
 
 @admin.route('/roles')
 @login_required

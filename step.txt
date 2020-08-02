@@ -16,6 +16,8 @@
   $ brew services restart mysql
   $ mysql -u root
 
+
+### Fixes "Unknown system variable 'tx_isolation'"
   pip install --upgrade SQLAlchemy
 
   Need to edit: /Users/alexanderxiong/Documents/Personal/Projects/FSP/example3/python-flask-crud-1/.venv/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py
